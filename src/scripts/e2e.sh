@@ -12,7 +12,13 @@ if [[ ! -x "$F" ]]; then
   go build -o "$F" ./cmd/floatilla
 fi
 
-status() { "$F" get "$1" | head -1 | awk '{print $5}'; }
+# Capture output before parsing it: piping into head/grep -q can SIGPIPE
+# the CLI, which pipefail turns into a failure.
+status() {
+  local out
+  out=$("$F" get "$1")
+  awk 'NR == 1 { print $5 }' <<<"$out"
+}
 
 echo "waiting for the control plane…"
 for _ in $(seq 1 60); do
@@ -32,7 +38,8 @@ while (( SECONDS < deadline )); do
   s=$(status "$id")
   case "$s" in
     waiting)
-      if "$F" get "$id" | grep -q "Scripted question"; then
+      detail=$("$F" get "$id")
+      if [[ $detail == *"Scripted question"* ]]; then
         "$F" answer "$id" -text "use the boring approach"
       else
         "$F" answer "$id" -yes
