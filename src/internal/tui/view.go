@@ -399,17 +399,20 @@ func (a *App) drawGrid(c *Canvas, lay Layout, now time.Time) {
 			}
 		}
 		hidden := max(0, len(ts)-scroll-ln.Capacity)
-		a.drawLaneHeader(c, r, y, spec, ts, hidden, now)
+		a.drawLaneHeader(c, r, y, spec, ts, hidden, laneSelected && a.sel.id == "", now)
+		if len(ts) == 0 {
+			c.Spans(r.X, tilesTop, []Span{{"no agents · ", stFaint}, {"+", stInk}, {" new", stFaint}}, r.W)
+		}
 
+		// Unused tile slots stay blank; + adds an agent to the lane.
 		for row := 0; row < lay.Rows; row++ {
 			for col := 0; col < ln.TileCols; col++ {
 				k := scroll + row*ln.TileCols + col
-				tx, ty, tw := r.TileX[col], tilesTop+row*(tileH+rowGap), r.TileW[col]
-				if k < len(ts) {
-					a.drawTile(c, tx, ty, tw, tileH, ts[k], spec, ts[k].Id == a.sel.id, lay.Tile == TileCompact, now)
-				} else {
-					a.drawEmptySlot(c, tx, ty, tw, tileH, spec, laneSelected && a.sel.id == "" && k == len(ts))
+				if k >= len(ts) {
+					continue
 				}
+				tx, ty, tw := r.TileX[col], tilesTop+row*(tileH+rowGap), r.TileW[col]
+				a.drawTile(c, tx, ty, tw, tileH, ts[k], spec, ts[k].Id == a.sel.id, lay.Tile == TileCompact, now)
 			}
 		}
 	}
@@ -450,7 +453,9 @@ func (a *App) drawFilterRow(c *Canvas, lay Layout, lanes map[string][]*v1.Task) 
 	c.Text(a.w-margin-Width(right), 2, right, stMuted, Width(right))
 }
 
-func (a *App) drawLaneHeader(c *Canvas, r laneRect, y int, spec *v1.ProcessTypeSpec, ts []*v1.Task, hidden int, now time.Time) {
+// drawLaneHeader draws the lane title, counts, legend and rule. selected
+// marks a lane selected with no agent in it (accent title and rule).
+func (a *App) drawLaneHeader(c *Canvas, r laneRect, y int, spec *v1.ProcessTypeSpec, ts []*v1.Task, hidden int, selected bool, now time.Time) {
 	title := fmt.Sprintf("%s · %d", spec.GetTitle(), len(ts))
 	right := a.laneCountSpans(ts)
 	if hidden > 0 {
@@ -462,7 +467,11 @@ func (a *App) drawLaneHeader(c *Canvas, r laneRect, y int, spec *v1.ProcessTypeS
 	}
 	rw := spansWidth(right)
 	c.Spans(r.X+r.W-rw, y, right, rw)
-	c.TextEllipsis(r.X, y, title, stBold, r.W-rw-1)
+	titleSt, ruleSt := stBold, stLine
+	if selected {
+		titleSt, ruleSt = Style{FG: Accent, Bold: true}, stAccent
+	}
+	c.TextEllipsis(r.X, y, title, titleSt, r.W-rw-1)
 
 	recent := a.fleet.RecentDone(spec.GetName(), now)
 	rec := ""
@@ -476,17 +485,7 @@ func (a *App) drawLaneHeader(c *Canvas, r laneRect, y int, spec *v1.ProcessTypeS
 		legend = spec.GetLegendShort()
 	}
 	c.TextEllipsis(r.X, y+1, legend, stMuted, avail)
-	c.HLine(r.X, y+2, r.W, '─', stLine)
-}
-
-func (a *App) drawEmptySlot(c *Canvas, x, y, w, h int, spec *v1.ProcessTypeSpec, selected bool) {
-	st := stLine
-	if selected {
-		st = stAccent
-	}
-	c.Box(x, y, w, h, BoxDashed, st)
-	text := "+  new " + spec.GetName() + " agent"
-	c.TextEllipsis(x+max(1, (w-Width(text))/2), y+h/2, text, stMuted, w-2)
+	c.HLine(r.X, y+2, r.W, '─', ruleSt)
 }
 
 func (a *App) drawLaneRail(c *Canvas, x, y, w, h int, spec *v1.ProcessTypeSpec, selected bool) {

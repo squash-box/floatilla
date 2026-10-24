@@ -85,13 +85,16 @@ func TestAcceptanceMainGrid(t *testing.T) {
 	if st := c.StyleAt(colOf(c, y, "╭"), y); st.FG != Accent {
 		t.Fatalf("selected border style = %+v, want accent", st)
 	}
-	for _, want := range []string{"lanes 1 : 2 : 1 · 3 rows", "PLANNING · 2", "IMPLEMENTATION · 6", "DEPLOY · 2", "+  new plan agent", "◆ 2 waiting", "$15.16"} {
+	for _, want := range []string{"lanes 1 : 2 : 1 · 3 rows", "PLANNING · 2", "IMPLEMENTATION · 6", "DEPLOY · 2", "◆ 2 waiting", "$15.16"} {
 		if row(c, want) < 0 {
 			t.Errorf("missing %q", want)
 		}
 	}
 	if row(c, "y  approve") < 0 {
 		t.Error("waiting tiles have no action chips")
+	}
+	if strings.Contains(c.Plain(), "┄") || strings.Contains(c.Plain(), "new plan agent") {
+		t.Error("unused slots should stay blank")
 	}
 }
 
