@@ -1,0 +1,82 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: src
+
+jobs:
+  checks:
+    name: generate · lint · test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: src/go.mod
+          cache-dependency-path: src/go.sum
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: src/runtime/agent/package-lock.json
+      - name: Install dependencies
+        run: make deps
+      - name: Generated code is up to date
+        run: make check-generated
+      - name: Lint
+        run: make lint
+      - name: Test
+        run: make test
+
+  images:
+    name: build images
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [platform, sandbox]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: src
+          file: src/deploy/Dockerfile
+          target: ${{ matrix.target }}
+          push: false
+          cache-from: type=gha,scope=${{ matrix.target }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.target }}
+
+  e2e:
+    name: end-to-end (scripted model)
+    runs-on: ubuntu-latest
+    needs: checks
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: src/go.mod
+          cache-dependency-path: src/go.sum
+      - name: Start the stack
+        run: make up
+      - name: Run end-to-end check
+        run: make e2e
+      - name: Stack logs
+        if: failure()
+        run: |
+          docker compose -f deploy/docker-compose.yml logs --no-color
+          docker ps -a --filter label=floatilla.managed=true
+      - name: Stop the stack
+        if: always()
+        run: docker compose -f deploy/docker-compose.yml down -v
