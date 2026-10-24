@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Empty fleet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#f2a93b}a:hover{color:#ffc46b}
+</style>
+</helmet>
+<div style="width: 1280px; height: 792px; box-sizing: border-box; background: #0f1214; color: #e6e2d8; font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; line-height: 18px; display: flex; flex-direction: column; overflow: hidden">
+  <div style="height: 18px; flex-shrink: 0; background: #21272c; display: flex; align-items: center; gap: 16px; padding: 0 8px; white-space: nowrap">
+    <span style="font-weight: 700">flotilla</span>
+    <span style="color: #9aa1a8">plan 0  impl 0  deploy 0</span>
+    <span style="color: #343b42">│</span>
+    <span style="color: #9aa1a8">idle</span>
+    <span style="flex-grow: 1"></span>
+    <span style="color: #9aa1a8">today 312.4k tok · $16.40</span>
+    <span style="color: #9aa1a8">160×44</span>
+  </div>
+  <div style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; white-space: pre">
+    <span style="font-weight: 700">no agents running</span>
+    <span style="display: flex; gap: 24px; color: #9aa1a8">
+      <span><span style="background: #f2a93b; color: #0f1214; font-weight: 700; padding: 0 4px">n</span> new agent</span>
+      <span><span style="background: #21272c; color: #e6e2d8; padding: 0 4px">p</span> plan</span>
+      <span><span style="background: #21272c; color: #e6e2d8; padding: 0 4px">i</span> implement</span>
+      <span><span style="background: #21272c; color: #e6e2d8; padding: 0 4px">d</span> deploy</span>
+    </span>
+    <div style="margin-top: 18px; width: 560px; display: flex; flex-direction: column; border-top: 1px solid #343b42; padding-top: 4px">
+      <span style="color: #9aa1a8; font-weight: 700; font-size: 12px; letter-spacing: 0.06em">RECENT · TODAY</span>
+      <span style="display: flex; gap: 8px"><span style="color: #7bd88f">✓</span><span style="width: 56px; color: #9aa1a8">impl</span><span style="flex-grow: 1">orders-pagination</span><span style="color: #9aa1a8">closed · PR #142 merged · 2h</span></span>
+      <span style="display: flex; gap: 8px"><span style="color: #7bd88f">✓</span><span style="width: 56px; color: #9aa1a8">deploy</span><span style="flex-grow: 1">pricing-staging</span><span style="color: #9aa1a8">verified · 3h</span></span>
+      <span style="display: flex; gap: 8px"><span style="color: #f2777a">✗</span><span style="width: 56px; color: #9aa1a8">impl</span><span style="flex-grow: 1">ledger-migration</span><span style="color: #9aa1a8">stopped in testing · 4h</span></span>
+      <span style="display: flex; gap: 8px"><span style="color: #7bd88f">✓</span><span style="width: 56px; color: #9aa1a8">plan</span><span style="flex-grow: 1">fx-retry-spec</span><span style="color: #9aa1a8">spec approved · 5h</span></span>
+      <span style="color: #9aa1a8; margin-top: 4px"><span style="color: #e6e2d8">r</span> rerun selected · <span style="color: #e6e2d8">⏎</span> open artefacts · <span style="color: #e6e2d8">h</span> full history</span>
+    </div>
+  </div>
+  <div style="height: 18px; flex-shrink: 0; background: #21272c; display: flex; align-items: center; gap: 16px; padding-right: 8px; white-space: nowrap; color: #9aa1a8">
+    <span style="background: #f2a93b; color: #0f1214; font-weight: 700; padding: 0 8px">IDLE</span>
+    <span><span style="color: #e6e2d8">n</span> new agent</span>
+    <span><span style="color: #e6e2d8">h</span> history</span>
+    <span style="flex-grow: 1"></span>
+    <span><span style="color: #e6e2d8">?</span> help</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":792}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

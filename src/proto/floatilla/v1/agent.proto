@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package floatilla.v1;
+
+import "floatilla/v1/pack.proto";
+import "floatilla/v1/run.proto";
+import "floatilla/v1/task.proto";
+
+option go_package = "github.com/squash-box/floatilla/src/gen/go/floatilla/v1;floatillav1";
+
+// The stdio protocol between the sandbox supervisor (Go) and the agent runtime
+// (any language). One protojson-encoded message per line: SupervisorMessage on
+// the runtime's stdin, AgentMessage on its stdout. stderr is free-form.
+
+message ModelConfig {
+  // "anthropic" or "scripted" (deterministic, no API calls).
+  string provider = 1;
+  string model = 2;
+  // low | medium | high | xhigh | max
+  string effort = 3;
+  int32 max_tokens = 4;
+}
+
+message RunInit {
+  Task task = 1;
+  Resume resume = 2;
+  ProcessTypeSpec process_type = 3;
+  WorkflowSpec workflow = 4;
+  string workspace = 5;
+  ModelConfig model = 6;
+}
+
+message ToolDecision {
+  string request_id = 1;
+  bool allowed = 2;
+  string reason = 3;
+}
+
+message SupervisorMessage {
+  oneof body {
+    RunInit init = 1;
+    ToolDecision tool_decision = 2;
+    PromptAnswer answer = 3;
+    StopRun stop = 4;
+  }
+}
+
+// ToolRequest asks the supervisor whether a tool call may run.
+message ToolRequest {
+  string request_id = 1;
+  string tool = 2;
+  // Short human form, e.g. "bash(pnpm test --runInBand)".
+  string summary = 3;
+  string input_json = 4;
+}
+
+// AskHuman raises a question or approval prompt; the answer arrives as a
+// SupervisorMessage.answer with the same prompt id.
+message AskHuman {
+  Prompt prompt = 1;
+}
+
+message AgentMessage {
+  oneof body {
+    StageStarted stage_started = 1;
+    StageFinished stage_finished = 2;
+    Progress progress = 3;
+    LogLine log = 4;
+    ArtefactRef artefact = 5;
+    UsageDelta usage = 6;
+    ToolRequest tool_request = 7;
+    AskHuman ask = 8;
+    RunFinished finished = 9;
+  }
+}

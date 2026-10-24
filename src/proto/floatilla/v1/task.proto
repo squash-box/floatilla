@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package floatilla.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/squash-box/floatilla/src/gen/go/floatilla/v1;floatillav1";
+
+// TaskStatus is orthogonal to the stage a task is in.
+enum TaskStatus {
+  TASK_STATUS_UNSPECIFIED = 0;
+  // Accepted; a run request is on the queue but no sandbox has started it.
+  TASK_STATUS_QUEUED = 1;
+  TASK_STATUS_RUNNING = 2;
+  // A live run is blocked on a human (permission, question, approval).
+  TASK_STATUS_WAITING = 3;
+  // No compute: the task is waiting on an external event (e.g. a PR review).
+  TASK_STATUS_PARKED = 4;
+  TASK_STATUS_PAUSED = 5;
+  TASK_STATUS_FAILED = 6;
+  TASK_STATUS_SUCCEEDED = 7;
+}
+
+enum PromptKind {
+  PROMPT_KIND_UNSPECIFIED = 0;
+  PROMPT_KIND_PERMISSION = 1;
+  PROMPT_KIND_QUESTION = 2;
+  PROMPT_KIND_APPROVAL = 3;
+}
+
+message Prompt {
+  string id = 1;
+  PromptKind kind = 2;
+  // e.g. "approve bash(pnpm test --runInBand)?"
+  string text = 3;
+  // Optional detail shown under the prompt (full command, question context).
+  string detail = 4;
+}
+
+message Usage {
+  int64 input_tokens = 1;
+  int64 output_tokens = 2;
+  int64 cache_read_tokens = 3;
+  int64 cache_write_tokens = 4;
+  double cost_usd = 5;
+}
+
+message StageRecord {
+  int32 index = 1;
+  string name = 2;
+  google.protobuf.Timestamp started_at = 3;
+  google.protobuf.Timestamp finished_at = 4;
+  // Hand-off notes from the agent, fed into later stages and later runs.
+  string summary = 5;
+}
+
+// ArtefactRef is a generic artefact summary. `kind` is open-ended (log, diff,
+// tests, doc, pr, deploy, ...) so new process types can add their own.
+message ArtefactRef {
+  string kind = 1;
+  string title = 2;
+  // One-line summary for tiles and the detail rail, e.g. "7 files +184 −36".
+  string summary = 3;
+  // Where the full artefact lives (workspace path, URL, object key).
+  string uri = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+// Task is the long-lived unit the fleet UI calls an "agent". It outlives any
+// single run (container); runs are numbered by run_seq.
+message Task {
+  string id = 1;
+  // kebab-case slug, e.g. "auth-refactor"
+  string name = 2;
+  string process_type = 3;
+  string workflow = 4;
+  string title = 5;
+  string instructions = 6;
+  map<string, string> inputs = 7;
+  string parent_id = 8;
+
+  TaskStatus status = 9;
+  // Index into the process type's stage list (drives the stage track).
+  int32 stage_index = 10;
+  // 0–1 within the current stage; unset means unknown.
+  optional float stage_progress = 11;
+  repeated StageRecord stages = 12;
+
+  string activity = 13;
+  repeated string tail = 14;
+  Prompt prompt = 15;
+  // Event key a parked task is waiting for.
+  string park_on = 16;
+  Usage usage = 17;
+
+  uint32 run_seq = 18;
+  // Attempt number of the current run_seq's stage (lease-expiry retries).
+  uint32 attempt = 19;
+  google.protobuf.Timestamp lease_expires_at = 20;
+
+  string error = 21;
+  string branch = 22;
+  // 0–1 share of the model context window in use.
+  double context_used = 23;
+  repeated ArtefactRef artefacts = 24;
+
+  google.protobuf.Timestamp created_at = 25;
+  google.protobuf.Timestamp started_at = 26;
+  google.protobuf.Timestamp finished_at = 27;
+  google.protobuf.Timestamp updated_at = 28;
+}

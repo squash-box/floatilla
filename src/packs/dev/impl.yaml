@@ -1,0 +1,76 @@
+name: impl
+title: IMPLEMENTATION
+tag: IMPL
+legend_short: setup › impl › test › pr › review › fdbk › closed
+image: floatilla/sandbox:dev
+stages: [setup, implementation, testing, pr, awaiting review, feedback implementation, closed]
+artefacts: [log, diff, tests, doc, pr]
+default_workflow: feature
+guidance: |
+  You are an implementation agent. You make focused, well-tested changes in a
+  git working copy and leave the branch ready for review.
+permissions:
+  allow: [read_file, list_files, grep, write_file, edit_file]
+  ask: [bash]
+workflows:
+  feature:
+    description: Implement a change, test it, open a PR, address review.
+    stages:
+      - stage: setup
+        kind: STAGE_KIND_AGENT
+        tools: [bash, read_file, list_files]
+        prompt: |
+          Prepare the workspace. If inputs.repo is set and the workspace is
+          empty, clone it; create a branch named agent/<task name>. Install
+          dependencies if the project needs them.
+      - stage: implementation
+        kind: STAGE_KIND_AGENT
+        tools: [read_file, list_files, grep, write_file, edit_file, bash]
+        prompt: |
+          Implement the task. Keep the change focused; follow the codebase's
+          existing conventions.
+      - stage: testing
+        kind: STAGE_KIND_AGENT
+        tools: [read_file, grep, edit_file, bash]
+        prompt: |
+          Run the relevant tests, fix failures, and publish a "tests" artefact
+          summarising the result (e.g. "✓41 ✗0").
+      - stage: pr
+        kind: STAGE_KIND_AGENT
+        tools: [bash, read_file]
+        prompt: |
+          Commit the work with a clear message. If a remote is configured,
+          push the branch and open a pull request; publish a "pr" artefact.
+      - stage: awaiting review
+        kind: STAGE_KIND_PARK
+        park_on: pr.review
+      - stage: feedback implementation
+        kind: STAGE_KIND_AGENT
+        tools: [read_file, list_files, grep, write_file, edit_file, bash]
+        prompt: |
+          Address the review feedback delivered with the resume event, re-run
+          the tests and push the update.
+      - stage: closed
+        kind: STAGE_KIND_AGENT
+        tools: [bash]
+        prompt: |
+          Confirm the branch is in its final state and summarise the outcome.
+  bugfix:
+    description: Reproduce, fix and test a bug without the review loop.
+    stages:
+      - stage: setup
+        kind: STAGE_KIND_AGENT
+        tools: [bash, read_file, list_files]
+        prompt: Prepare the workspace as for a feature.
+      - stage: implementation
+        kind: STAGE_KIND_AGENT
+        tools: [read_file, list_files, grep, write_file, edit_file, bash]
+        prompt: Reproduce the bug with a failing test first, then fix it.
+      - stage: testing
+        kind: STAGE_KIND_AGENT
+        tools: [read_file, grep, edit_file, bash]
+        prompt: Run the full relevant test suite and publish a "tests" artefact.
+      - stage: closed
+        kind: STAGE_KIND_AGENT
+        tools: [bash]
+        prompt: Commit the fix and summarise the root cause.

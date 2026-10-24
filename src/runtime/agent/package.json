@@ -1,0 +1,25 @@
+{
+  "name": "@floatilla/agent",
+  "version": "0.1.0",
+  "description": "floatilla agent runtime: the in-sandbox agent loop",
+  "main": "dist/src/main.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "test": "tsc -p . && node --test \"dist/test/**/*.test.js\"",
+    "start": "node dist/src/main.js"
+  },
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0",
+    "@bufbuild/protobuf": "^2.16.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@bufbuild/buf": "^1.75.0",
+    "@bufbuild/protoc-gen-es": "^2.16.0",
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
+  },
+  "private": true
+}

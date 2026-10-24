@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package floatilla.v1;
+
+option go_package = "github.com/squash-box/floatilla/src/gen/go/floatilla/v1;floatillav1";
+
+// ProcessTypeSpec is a plugin manifest: one lane in the fleet UI. Packs ship
+// these as YAML (see packs/), which is decoded with protojson.
+message ProcessTypeSpec {
+  // Short code, e.g. "plan", "impl", "deploy".
+  string name = 1;
+  // Lane title, e.g. "IMPLEMENTATION".
+  string title = 2;
+  // Tag shown as [TAG], e.g. "IMPL".
+  string tag = 3;
+  string legend_short = 4;
+  // Sandbox image runs of this type use.
+  string image = 5;
+  // Ordered lifecycle stages; workflows pick from these.
+  repeated string stages = 6;
+  // Artefact kinds this type produces, in display order.
+  repeated string artefacts = 7;
+  PermissionPolicy permissions = 8;
+  map<string, WorkflowSpec> workflows = 9;
+  string default_workflow = 10;
+  // Extra system-prompt guidance shared by every stage of this type.
+  string guidance = 11;
+}
+
+// PermissionPolicy decides tool calls in the supervisor. Tools not listed are
+// denied. `ask` raises a permission prompt and waits for a human.
+message PermissionPolicy {
+  repeated string allow = 1;
+  repeated string ask = 2;
+  repeated string deny = 3;
+}
+
+enum StageKind {
+  STAGE_KIND_UNSPECIFIED = 0;
+  // The agent loop works on this stage.
+  STAGE_KIND_AGENT = 1;
+  // No compute: the run ends and the task parks until `park_on` arrives.
+  STAGE_KIND_PARK = 2;
+}
+
+message WorkflowStage {
+  // Must be one of the process type's stages.
+  string stage = 1;
+  StageKind kind = 2;
+  // Agent stages: what to accomplish in this stage.
+  string prompt = 3;
+  // Agent stages: tools offered to the model (control tools are implicit).
+  repeated string tools = 4;
+  // Park stages: event key that resumes the task.
+  string park_on = 5;
+  // Agent stages: turn cap before the stage fails (0 = runtime default).
+  int32 max_turns = 6;
+}
+
+message WorkflowSpec {
+  string name = 1;
+  string description = 2;
+  repeated WorkflowStage stages = 3;
+}

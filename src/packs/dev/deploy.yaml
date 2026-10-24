@@ -1,0 +1,36 @@
+name: deploy
+title: DEPLOY
+tag: DEPLOY
+legend_short: setup › deploy › verify
+image: floatilla/sandbox:dev
+stages: [setup, deploy, verify]
+artefacts: [log, deploy]
+default_workflow: rollout
+guidance: |
+  You are a deploy agent. You roll changes out carefully, verify them, and
+  always know how to roll back. Never improvise against production: every
+  mutating command needs human approval.
+permissions:
+  allow: [read_file, list_files, grep]
+  ask: [bash]
+workflows:
+  rollout:
+    description: Prepare, deploy to the target env, and verify.
+    stages:
+      - stage: setup
+        kind: STAGE_KIND_AGENT
+        tools: [bash, read_file, list_files]
+        prompt: |
+          Identify what is being deployed (inputs.ref) and to where
+          (inputs.env). Work out the deploy and rollback commands.
+      - stage: deploy
+        kind: STAGE_KIND_AGENT
+        tools: [bash, read_file]
+        prompt: Run the deploy. Publish a "deploy" artefact with env and status.
+      - stage: verify
+        kind: STAGE_KIND_AGENT
+        tools: [bash, read_file]
+        prompt: |
+          Run smoke checks against the target env and update the "deploy"
+          artefact (e.g. "env prod  checks 14/20  err 0.1%"). Include the
+          rollback command in your stage summary.

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fleet list, 80 columns</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#f2a93b}a:hover{color:#ffc46b}
+</style>
+</helmet>
+<div style="width: 640px; height: 432px; box-sizing: border-box; background: #0f1214; color: #e6e2d8; font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; line-height: 18px; display: flex; flex-direction: column; overflow: hidden">
+  <div style="height: 18px; flex-shrink: 0; background: #21272c; display: flex; align-items: center; gap: 12px; padding: 0 8px; white-space: nowrap">
+    <span style="font-weight: 700">flotilla</span>
+    <span style="color: #6cb6ff">⠹ 5</span>
+    <span style="color: #c99bf0; font-weight: 700">◆ 2</span>
+    <span style="color: #f2777a">✗ 1</span>
+    <span style="color: #7bd88f">✓ 1</span>
+    <span style="flex-grow: 1"></span>
+    <span style="color: #9aa1a8">$15.16</span>
+    <span style="color: #9aa1a8">80×24</span>
+  </div>
+  <div style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; gap: 18px; padding: 14px 8px 8px">
+    <div style="position: relative; flex-shrink: 0; border: 1px solid #f2a93b; border-radius: 2px; background: #171b1f; padding: 10px 0 4px; display: flex; flex-direction: column; white-space: pre">
+      <span style="position: absolute; top: -10px; left: 8px; padding: 0 6px; background: #0f1214; color: #f2a93b; font-weight: 700; font-size: 12px; letter-spacing: 0.06em">AGENTS · 10</span>
+      <sc-for list="{{rows}}" as="a" hint-placeholder-count="13">
+        <sc-if value="{{a.isHead}}" hint-placeholder-val="{{ false }}">
+          <span style="display: flex; gap: 8px; padding: 0 8px 0 16px; color: #9aa1a8"><span style="font-weight: 700; font-size: 12px; letter-spacing: 0.06em; color: #e6e2d8">{{a.title}}</span><span style="overflow: hidden; text-overflow: ellipsis">{{a.legend}}</span></span>
+        </sc-if>
+        <sc-if value="{{a.isAgent}}" hint-placeholder-val="{{ true }}">
+          <span style="display: flex; gap: 8px; background: {{a.bg}}; padding-right: 8px">
+            <span style="color: #f2a93b; width: 8px">{{a.mark}}</span>
+            <span style="color: {{a.color}}; width: 8px; font-weight: {{a.weight}}">{{a.glyph}}</span>
+            <span style="width: 144px; font-weight: {{a.nameWeight}}; overflow: hidden; text-overflow: ellipsis">{{a.name}}</span>
+            <span style="width: 56px; flex-shrink: 0"><span style="color: #9aa1a8">{{a.done}}</span><span style="color: {{a.color}}">{{a.cur}}</span><span style="color: #5d656d">{{a.todo}}</span></span>
+            <span style="width: 112px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis">{{a.stage}}</span>
+            <span style="flex-grow: 1; color: {{a.activityColor}}; overflow: hidden; text-overflow: ellipsis">{{a.activity}}</span>
+          </span>
+        </sc-if>
+      </sc-for>
+    </div>
+    <div style="position: relative; flex-grow: 1; min-height: 0; border: 1px solid #343b42; background: #171b1f; padding: 10px 12px 0; display: flex; flex-direction: column; white-space: pre; overflow: hidden">
+      <span style="position: absolute; top: -10px; left: 8px; padding: 0 6px; background: #0f1214; color: #9aa1a8; font-weight: 700; font-size: 12px; letter-spacing: 0.06em">FLAKY-TESTS · IMPL · TESTING 3/7</span>
+      <span style="color: #c99bf0; font-weight: 700">◆ approve Bash(pnpm test --runInBand)?</span>
+      <span style="display: flex; gap: 16px; color: #9aa1a8"><span><span style="background: #c99bf0; color: #0f1214; font-weight: 700; padding: 0 4px">y</span> approve</span><span><span style="background: #21272c; color: #e6e2d8; padding: 0 4px">n</span> deny</span><span><span style="background: #21272c; color: #e6e2d8; padding: 0 4px">⏎</span> open detail</span></span>
+      <span style="color: #9aa1a8"><span style="color: #5d656d">│ </span>ran checkout.spec.ts 20× · 0 failures</span>
+    </div>
+  </div>
+  <div style="height: 18px; flex-shrink: 0; background: #21272c; display: flex; align-items: center; gap: 12px; padding-right: 8px; white-space: nowrap; color: #9aa1a8">
+    <span style="background: #f2a93b; color: #0f1214; font-weight: 700; padding: 0 8px">LIST</span>
+    <span><span style="color: #e6e2d8">j/k</span> move</span>
+    <span><span style="color: #e6e2d8">[ ]</span> group</span>
+    <span><span style="color: #f2a93b">⏎</span> open</span>
+    <span><span style="color: #e6e2d8">y/n</span> answer</span>
+    <span style="flex-grow: 1"></span>
+    <span><span style="color: #e6e2d8">?</span> help</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":640,"height":432}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const C = { running: '#6cb6ff', waiting: '#c99bf0', success: '#7bd88f', failed: '#f2777a', paused: '#9aa1a8' };
+    const N = { plan: 3, impl: 7, deploy: 3 };
+    const heads = {
+      plan: { title: 'PLAN · 2', legend: 'explore › spec › validate' },
+      impl: { title: 'IMPL · 6', legend: 'setup › impl › test › pr › review › fdbk › closed' },
+      deploy: { title: 'DEPLOY · 2', legend: 'setup › deploy › verify' }
+    };
+    const raw = [
+      ['plan', 'fx-retry-spec', 'waiting', '◆', 2, 'validation', 'approve spec?'],
+      ['plan', 'otel-tracing', 'running', '⠹', 0, 'exploration', 'reading handlers/'],
+      ['impl', 'flaky-tests', 'waiting', '◆', 2, 'testing', 'approve Bash(…)?'],
+      ['impl', 'ledger-migration', 'failed', '✗', 2, 'testing', '2 tests failing'],
+      ['impl', 'auth-refactor', 'running', '⠼', 1, 'implementation', 'editing middleware.ts'],
+      ['impl', 'orders-pagination', 'running', '⠧', 5, 'feedback', 'review on #142 · 2/3'],
+      ['impl', 'deps-bump', 'running', '⠏', 3, 'pr', 'writing PR description'],
+      ['impl', 'docs-sweep', 'paused', '‖', 1, 'implementation', 'paused by you'],
+      ['deploy', 'fx-hotfix-prod', 'running', '⠙', 2, 'verify', 'smoke 14/20 · prod'],
+      ['deploy', 'pricing-staging', 'success', '✓', 2, 'verify ✓', 'verified · staging']
+    ];
+    const rows = [];
+    let last = '';
+    raw.forEach((r) => {
+      const type = r[0];
+      if (type !== last) { rows.push({ isHead: true, isAgent: false, title: heads[type].title, legend: heads[type].legend }); last = type; }
+      const st = r[2];
+      const n = N[type];
+      const i = r[4];
+      const sel = r[1] === 'flaky-tests';
+      const success = st === 'success';
+      rows.push({
+        isHead: false, isAgent: true,
+        name: r[1], glyph: r[3],
+        done: '■'.repeat(success ? 0 : i),
+        cur: success ? '■'.repeat(n) : '■',
+        todo: success ? '' : '□'.repeat(n - i - 1),
+        stage: r[5], activity: r[6],
+        color: C[st],
+        weight: st === 'waiting' ? 700 : 400,
+        nameWeight: sel ? 700 : 400,
+        activityColor: st === 'running' ? '#9aa1a8' : C[st],
+        mark: sel ? '▌' : ' ',
+        bg: sel ? '#2e2618' : 'transparent'
+      });
+    });
+    return { rows };
+  }
+}
+</script>
+</body>
+</html>

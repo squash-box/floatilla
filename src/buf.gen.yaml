@@ -1,0 +1,14 @@
+version: v2
+clean: true
+plugins:
+  - local: [go, tool, protoc-gen-go]
+    out: gen/go
+    opt: paths=source_relative
+  - local: [go, tool, protoc-gen-connect-go]
+    out: gen/go
+    opt: paths=source_relative
+  - local: runtime/agent/node_modules/.bin/protoc-gen-es
+    out: runtime/agent/src/gen
+    opt:
+      - target=ts
+      - import_extension=js

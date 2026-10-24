@@ -1,0 +1,28 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-22T21:40:00Z"},
+  "title": "Agent Fleet Manager",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 1280, "h": 792, "title": "Fleet grid · 160×44", "is_interactive": true},
+    "Detail.dc.html": {"x": 1360, "y": 0, "w": 1280, "h": 792, "title": "Agent detail · 160×44", "is_interactive": true},
+    "Grid-120.dc.html": {"x": 0, "y": 1212, "w": 960, "h": 648, "title": "Fleet grid · 120×36"},
+    "Grid-80.dc.html": {"x": 1040, "y": 1212, "w": 640, "h": 432, "title": "Fleet list · 80×24"},
+    "Detail-80.dc.html": {"x": 1760, "y": 1212, "w": 640, "h": 432, "title": "Agent detail · 80×24"},
+    "TooSmall.dc.html": {"x": 2480, "y": 1212, "w": 480, "h": 288, "title": "Below minimum · 60×16"},
+    "Lanes-Collapsed.dc.html": {"x": 0, "y": 2280, "w": 1280, "h": 792, "title": "Empty lane collapsed · 160×44", "is_interactive": true},
+    "Fleet-Empty.dc.html": {"x": 1360, "y": 2280, "w": 1280, "h": 792, "title": "Empty fleet · 160×44"}
+  },
+  "order": ["Main.dc.html", "Detail.dc.html", "Grid-120.dc.html", "Grid-80.dc.html", "Detail-80.dc.html", "TooSmall.dc.html", "Lanes-Collapsed.dc.html", "Fleet-Empty.dc.html"],
+  "notes": {
+    "rowWide": {"x": 0, "y": -300, "text": "Fleet manager · full width", "kind": "title1", "maxW": 2640},
+    "rowResize": {"x": 0, "y": 912, "text": "Resizing · the same fleet at narrower terminals", "kind": "title1", "maxW": 2960},
+    "rowEmpty": {"x": 0, "y": 1980, "text": "Empty lanes · collapse and reflow", "kind": "title1", "maxW": 2640},
+    "emptyRules": {"x": 2720, "y": 2280, "w": 400, "maxH": 640, "fill": "orange", "text": "Empty lanes\n\nA lane is empty only when it has no agents at all. Done or paused agents still hold their tiles; done tiles age out after 30m into the lane's '✓n recent' count.\n\nEmpty → wait 30s (debounce), then collapse to a 14-col rail: type, '0 agents', the stage list, last run, n new, ⏎ expand. Lane order never changes.\n\nFreed width goes to open lanes: tile columns = round(4 × lane agents ÷ open agents), min 1. Here plan 2 / impl 8 → 1 : 3.\n\nA new agent in a collapsed lane re-expands it at once (no debounce). z pins all lanes open for people who want fixed positions.\n\nSelection survives every reflow.\n\nAll lanes empty → one centred idle screen: n new / p i d by type, plus today's recent runs.\n\n80 cols: empty types show a one-line 'DEPLOY · 0 · n new' header."},
+    "resizeRules": {"x": 3040, "y": 1212, "w": 400, "maxH": 760, "fill": "teal", "text": "Agent types\n\nThe fleet is grouped into one lane per type: PLANNING (exploration › specification › validation), IMPLEMENTATION (setup › implementation › testing › pr › awaiting review › feedback implementation › closed), DEPLOY (setup › deploy › verify). Each lane header lists its stages and per-state counts.\n\nEvery tile carries a stage track, one segment per stage: 3 for plan and deploy, 7 for implementation, so the shape alone tells the type. Done stages muted, current stage in the status colour, later stages empty.\n\nResize rules (terminal columns)\n\n≥140 → lanes 1 : 2 : 1 tile columns (plan · impl · deploy), 3 rows each; empty slots offer 'n new agent'. Detail = rail with the type's stages + artefact pane.\n\n100–139 → three lanes, one tile column each, compact tiles; overflow shown as '↓n' in the lane header.\n\n80–99 → list grouped under type headers, ■□ stage dots per row, preview of the selected agent. Detail = tab strip, one artefact at a time.\n\n<80×24 → single centred 'too small' line; agents keep running.\n\nOn SIGWINCH: recompute layout, keep the selected agent and artefact, keep a following log pinned to the bottom, redraw ≤10 fps."}
+  },
+  "designSystems": [
+    {"title": "Flotilla", "namespace": "flotilla", "artifact": "https://claude.ai/code/artifact/811c57d0-8b31-4980-a51c-c063160c81e7", "version": "1792701158-aea8", "copiedAt": "2026-10-22T21:40:00Z"}
+  ]
+}

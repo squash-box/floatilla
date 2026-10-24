@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+package floatilla.v1;
+
+import "floatilla/v1/pack.proto";
+import "floatilla/v1/task.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/squash-box/floatilla/src/gen/go/floatilla/v1;floatillav1";
+
+// Messages that travel over NATS between the control plane, launchers and
+// sandbox supervisors. Wire format is binary protobuf.
+
+message PromptAnswer {
+  string prompt_id = 1;
+  // Permission / approval prompts.
+  bool approved = 2;
+  // Question prompts (and optional note on approvals).
+  string text = 3;
+}
+
+message ExternalEvent {
+  string key = 1;
+  string payload_json = 2;
+}
+
+// Resume carries what woke a task up, if anything.
+message Resume {
+  oneof kind {
+    PromptAnswer answer = 1;
+    ExternalEvent event = 2;
+  }
+}
+
+// RunRequest is what the dispatcher puts on tasks.<process_type>.
+message RunRequest {
+  string task_id = 1;
+  uint32 run_seq = 2;
+  // Snapshot of the task when the run was enqueued.
+  Task task = 3;
+  Resume resume = 4;
+  ProcessTypeSpec process_type = 5;
+}
+
+enum Outcome {
+  OUTCOME_UNSPECIFIED = 0;
+  OUTCOME_SUCCEEDED = 1;
+  OUTCOME_FAILED = 2;
+  OUTCOME_PARKED = 3;
+  OUTCOME_STOPPED = 4;
+}
+
+enum LogTone {
+  LOG_TONE_UNSPECIFIED = 0;
+  LOG_TONE_MUTED = 1;
+  LOG_TONE_SUCCESS = 2;
+  LOG_TONE_FAILED = 3;
+}
+
+message RunStarted {
+  string sandbox_id = 1;
+}
+
+message Heartbeat {}
+
+message StageStarted {
+  int32 index = 1;
+  string name = 2;
+}
+
+message StageFinished {
+  int32 index = 1;
+  string summary = 2;
+}
+
+message Progress {
+  string activity = 1;
+  optional float stage_progress = 2;
+  double context_used = 3;
+  repeated string tail = 4;
+}
+
+message LogLine {
+  // start | read | grep | think | write | edit | bash | ... ; empty on
+  // tool-output continuation lines.
+  string kind = 1;
+  string text = 2;
+  LogTone tone = 3;
+}
+
+message PromptRaised {
+  Prompt prompt = 1;
+}
+
+message PromptResolved {
+  string prompt_id = 1;
+}
+
+message UsageDelta {
+  string model = 1;
+  Usage usage = 2;
+}
+
+message RunFinished {
+  Outcome outcome = 1;
+  string error = 2;
+  // OUTCOME_PARKED: event key to wait for.
+  string park_on = 3;
+}
+
+// AgentEvent is published by supervisors (and launchers, for crashed
+// sandboxes) on events.<task_id>.ctl and events.<task_id>.log.
+message AgentEvent {
+  string task_id = 1;
+  uint32 run_seq = 2;
+  // Monotonic per run, assigned by the supervisor.
+  uint64 seq = 3;
+  google.protobuf.Timestamp at = 4;
+
+  oneof body {
+    RunStarted run_started = 10;
+    Heartbeat heartbeat = 11;
+    StageStarted stage_started = 12;
+    StageFinished stage_finished = 13;
+    Progress progress = 14;
+    LogLine log = 15;
+    ArtefactRef artefact = 16;
+    PromptRaised prompt_raised = 17;
+    PromptResolved prompt_resolved = 18;
+    UsageDelta usage = 19;
+    RunFinished run_finished = 20;
+  }
+}
+
+message StopRun {
+  string reason = 1;
+}
+
+// Command is published by the control plane on cmd.<task_id> for the live run.
+message Command {
+  string task_id = 1;
+  uint32 run_seq = 2;
+
+  oneof body {
+    PromptAnswer answer = 10;
+    StopRun stop = 11;
+  }
+}

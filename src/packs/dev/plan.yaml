@@ -1,0 +1,39 @@
+name: plan
+title: PLANNING
+tag: PLAN
+legend_short: explore › spec › validate
+image: floatilla/sandbox:dev
+stages: [exploration, specification, validation]
+artefacts: [log, doc]
+default_workflow: spec
+guidance: |
+  You are a planning agent. You explore a codebase or problem space and write
+  a specification that implementation agents can execute without guessing.
+  You do not change product code.
+permissions:
+  allow: [read_file, list_files, grep, write_file, edit_file]
+  ask: [bash]
+workflows:
+  spec:
+    description: Explore, write a spec, and get it approved by a human.
+    stages:
+      - stage: exploration
+        kind: STAGE_KIND_AGENT
+        tools: [read_file, list_files, grep, bash]
+        prompt: |
+          Explore the workspace and any inputs to understand the problem.
+          Record findings and open questions in notes/exploration.md.
+      - stage: specification
+        kind: STAGE_KIND_AGENT
+        tools: [read_file, list_files, grep, write_file, edit_file]
+        prompt: |
+          Write the specification to docs/spec.md: goal, scope, non-goals,
+          design, step-by-step plan, and test strategy. Publish it as a "doc"
+          artefact.
+      - stage: validation
+        kind: STAGE_KIND_AGENT
+        tools: [read_file, edit_file]
+        prompt: |
+          Re-read docs/spec.md critically and resolve anything ambiguous. Then
+          ask the human to approve the spec with ask_human (kind approval).
+          If they reject it, revise using their note and ask again.
