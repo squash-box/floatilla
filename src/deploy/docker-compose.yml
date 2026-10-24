@@ -14,8 +14,12 @@ x-launcher: &launcher
     NATS_URL: nats://nats:4222
     FLOATILLA_DOCKER_NETWORK: floatilla
     FLOATILLA_CONCURRENCY: "4"
-    # Passed through to sandboxes. With no API key, runs use the scripted
-    # model provider (no API calls).
+    # Passed through to sandboxes. Engine by default: Claude Code on your
+    # subscription if CLAUDE_CODE_OAUTH_TOKEN is set (from `claude
+    # setup-token`), else floatilla's own loop on ANTHROPIC_API_KEY, else the
+    # scripted model (no API calls). FLOATILLA_MODEL_PROVIDER overrides:
+    # claude-code | anthropic | scripted.
+    CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN:-}
     ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     FLOATILLA_MODEL_PROVIDER: ${FLOATILLA_MODEL_PROVIDER:-}
     FLOATILLA_MODEL: ${FLOATILLA_MODEL:-}

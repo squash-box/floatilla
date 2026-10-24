@@ -23,7 +23,9 @@ const (
 
 type ModelConfig struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// "anthropic" or "scripted" (deterministic, no API calls).
+	// Engine: "claude-code" (Claude Code via the Agent SDK), "anthropic"
+	// (floatilla's own loop on the Messages API) or "scripted" (deterministic,
+	// no API calls).
 	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
 	Model    string `protobuf:"bytes,2,opt,name=model,proto3" json:"model,omitempty"`
 	// low | medium | high | xhigh | max

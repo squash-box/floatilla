@@ -25,7 +25,7 @@ export interface StageRun {
   maxTurns: number;
 }
 
-const CONTROL_TOOLS = {
+export const CONTROL_TOOLS = {
   complete_stage: {
     description:
       "Finish the current stage. Call this once the stage's goal is met, with a hand-off summary for later stages (what you did, where things are, anything unresolved).",

@@ -49,11 +49,18 @@ func run(log *slog.Logger) error {
 	}
 	defer b.Close()
 
+	// Default engine: Claude Code on the owner's subscription when a
+	// `claude setup-token` token is present, else our own loop on an API
+	// key, else the scripted model.
 	provider := env.String("FLOATILLA_MODEL_PROVIDER", "")
 	if provider == "" {
-		provider = "scripted"
-		if os.Getenv("ANTHROPIC_API_KEY") != "" {
+		switch {
+		case os.Getenv("CLAUDE_CODE_OAUTH_TOKEN") != "":
+			provider = "claude-code"
+		case os.Getenv("ANTHROPIC_API_KEY") != "":
 			provider = "anthropic"
+		default:
+			provider = "scripted"
 		}
 	}
 

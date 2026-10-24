@@ -5,8 +5,7 @@ import { spawnSync } from "node:child_process";
 import { StageKind, type WorkflowStage } from "./gen/floatilla/v1/pack_pb.js";
 import type { RunInit } from "./gen/floatilla/v1/agent_pb.js";
 import { Outcome, LogTone } from "./gen/floatilla/v1/run_pb.js";
-import type { ModelProvider } from "./model.js";
-import { runStage } from "./loop.js";
+import type { StageEngine } from "./engine.js";
 import { StoppedError, type Host } from "./protocol.js";
 
 const DEFAULT_MAX_TURNS = 200;
@@ -72,7 +71,7 @@ function publishDiff(host: Host, workspace: string): void {
   host.send({ case: "artefact", value: { kind: "diff", title: "working tree diff", summary, uri: `git diff ${base}` } });
 }
 
-export async function runAgent(host: Host, init: RunInit, provider: ModelProvider): Promise<void> {
+export async function runAgent(host: Host, init: RunInit, engine: StageEngine): Promise<void> {
   const task = init.task!;
   const spec = init.processType!;
   const wf = init.workflow!;
@@ -81,7 +80,7 @@ export async function runAgent(host: Host, init: RunInit, provider: ModelProvide
 
   host.send({
     case: "log",
-    value: { kind: "start", text: `${task.workflow}: ${task.title} (run ${task.runSeq}, ${provider.model})`, tone: LogTone.UNSPECIFIED },
+    value: { kind: "start", text: `${task.workflow}: ${task.title} (run ${task.runSeq}, ${engine.name})`, tone: LogTone.UNSPECIFIED },
   });
 
   const done: { name: string; summary: string }[] = [];
@@ -103,9 +102,8 @@ export async function runAgent(host: Host, init: RunInit, provider: ModelProvide
 
     let summary: string;
     try {
-      summary = await runStage({
+      summary = await engine.runStage({
         host,
-        provider,
         workspace: init.workspace,
         system: systemPrompt(init),
         prompt: stagePrompt(init, ws, done, note),

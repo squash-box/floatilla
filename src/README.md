@@ -51,7 +51,21 @@ bin/floatilla answer auth-refactor -yes
 bin/floatilla event auth-refactor pr.review -payload '{"state":"changes_requested"}'
 ```
 
-Without `ANTHROPIC_API_KEY`, sandboxes use the **scripted** provider: a deterministic plan that exercises tools, permission prompts, questions, approvals and parking, with no API calls. Export `ANTHROPIC_API_KEY` before `make up` to use Claude (default `claude-opus-5-5`, effort `high`; override with `FLOATILLA_MODEL` / `FLOATILLA_EFFORT`). The API listens on `localhost:7420` (`FLOATILLA_PORT`).
+The API listens on `localhost:7420` (`FLOATILLA_PORT`).
+
+## Agent engines
+
+Each run picks an engine (`FLOATILLA_MODEL_PROVIDER`, or by default from the credentials present):
+
+| Engine | When | What runs the agent |
+| --- | --- | --- |
+| `claude-code` | `CLAUDE_CODE_OAUTH_TOKEN` set | Claude Code via the Agent SDK, on your Claude subscription |
+| `anthropic` | `ANTHROPIC_API_KEY` set | floatilla's own loop on the Messages API, billed per token |
+| `scripted` | neither | a deterministic plan with no API calls (used by CI) |
+
+To run on your subscription, generate a token with `claude setup-token`, put it in `deploy/.env` (see `deploy/.env.example`), then `make up`. Every engine keeps the same harness behaviour: the pack's permission policy and prompts on the fleet board, stage tools, artefacts and parking. With Claude Code, read-only tools (Read, Glob, Grep) are approved by Claude Code itself; edits and Bash go through the policy. Subscription runs meter tokens at $0, and plan limits appear on the task when they're hit. Defaults: `claude-opus-5-5`, effort `high` (`FLOATILLA_MODEL`, `FLOATILLA_EFFORT`).
+
+The subscription engine is for your own use: Anthropic doesn't allow third-party products to offer claude.ai login, so anyone you share floatilla with should use an API key.
 
 ## Fleet manager TUI
 

@@ -23,7 +23,9 @@ export const file_floatilla_v1_agent: GenFile = /*@__PURE__*/
  */
 export type ModelConfig = Message<"floatilla.v1.ModelConfig"> & {
   /**
-   * "anthropic" or "scripted" (deterministic, no API calls).
+   * Engine: "claude-code" (Claude Code via the Agent SDK), "anthropic"
+   * (floatilla's own loop on the Messages API) or "scripted" (deterministic,
+   * no API calls).
    *
    * @generated from field: string provider = 1;
    */

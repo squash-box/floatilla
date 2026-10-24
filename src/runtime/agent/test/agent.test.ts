@@ -5,6 +5,7 @@ import path from "node:path";
 import { after, before, describe, test } from "node:test";
 import { create, type MessageInitShape } from "@bufbuild/protobuf";
 import { runAgent } from "../src/agent.js";
+import { MessagesEngine } from "../src/engine.js";
 import { RunInitSchema, ToolDecisionSchema, type ToolDecision } from "../src/gen/floatilla/v1/agent_pb.js";
 import { StageKind } from "../src/gen/floatilla/v1/pack_pb.js";
 import { Outcome, PromptAnswerSchema, type PromptAnswer } from "../src/gen/floatilla/v1/run_pb.js";
@@ -80,7 +81,7 @@ describe("runAgent", () => {
 
   test("runs agent stages in order and parks at a park stage", async () => {
     const host = new FakeHost();
-    await runAgent(host, init(ws), new ScriptedProvider());
+    await runAgent(host, init(ws), new MessagesEngine(new ScriptedProvider()));
 
     assert.deepEqual(host.of("stageStarted").map((s) => s.name), ["setup", "implementation", "awaiting review"]);
     assert.deepEqual(host.of("stageFinished").map((s) => s.index), [0, 1]);
@@ -96,7 +97,7 @@ describe("runAgent", () => {
 
   test("resumes after finished stages and asks for approval", async () => {
     const host = new FakeHost();
-    await runAgent(host, init(ws, [0, 1, 2]), new ScriptedProvider());
+    await runAgent(host, init(ws, [0, 1, 2]), new MessagesEngine(new ScriptedProvider()));
     assert.deepEqual(host.of("stageStarted").map((s) => s.name), ["closed"]);
     assert.deepEqual(host.asks, ["approve closed result?"]);
     assert.equal(host.of("finished")[0]?.outcome, Outcome.SUCCEEDED);
@@ -104,7 +105,7 @@ describe("runAgent", () => {
 
   test("a denied tool is reported to the model and the stage continues", async () => {
     const host = new FakeHost((tool) => tool !== "bash");
-    await runAgent(host, init(ws), new ScriptedProvider());
+    await runAgent(host, init(ws), new MessagesEngine(new ScriptedProvider()));
     const logs = host.of("log").map((l) => String(l.text));
     assert.ok(logs.some((t) => t.startsWith("denied bash(")), logs.join("\n"));
     assert.equal(host.of("finished")[0]?.outcome, Outcome.PARKED);

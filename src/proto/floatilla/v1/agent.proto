@@ -13,7 +13,9 @@ option go_package = "github.com/squash-box/floatilla/src/gen/go/floatilla/v1;flo
 // the runtime's stdin, AgentMessage on its stdout. stderr is free-form.
 
 message ModelConfig {
-  // "anthropic" or "scripted" (deterministic, no API calls).
+  // Engine: "claude-code" (Claude Code via the Agent SDK), "anthropic"
+  // (floatilla's own loop on the Messages API) or "scripted" (deterministic,
+  // no API calls).
   string provider = 1;
   string model = 2;
   // low | medium | high | xhigh | max
