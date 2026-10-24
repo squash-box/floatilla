@@ -93,7 +93,9 @@ type ProcessTypeSpec struct {
 	Workflows       map[string]*WorkflowSpec `protobuf:"bytes,9,rep,name=workflows,proto3" json:"workflows,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	DefaultWorkflow string                   `protobuf:"bytes,10,opt,name=default_workflow,json=defaultWorkflow,proto3" json:"default_workflow,omitempty"`
 	// Extra system-prompt guidance shared by every stage of this type.
-	Guidance      string `protobuf:"bytes,11,opt,name=guidance,proto3" json:"guidance,omitempty"`
+	Guidance string `protobuf:"bytes,11,opt,name=guidance,proto3" json:"guidance,omitempty"`
+	// Lane position in the fleet UI, ascending (ties sort by name).
+	LaneOrder     int32 `protobuf:"varint,12,opt,name=lane_order,json=laneOrder,proto3" json:"lane_order,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -203,6 +205,13 @@ func (x *ProcessTypeSpec) GetGuidance() string {
 		return x.Guidance
 	}
 	return ""
+}
+
+func (x *ProcessTypeSpec) GetLaneOrder() int32 {
+	if x != nil {
+		return x.LaneOrder
+	}
+	return 0
 }
 
 // PermissionPolicy decides tool calls in the supervisor. Tools not listed are
@@ -420,7 +429,7 @@ var File_floatilla_v1_pack_proto protoreflect.FileDescriptor
 
 const file_floatilla_v1_pack_proto_rawDesc = "" +
 	"\n" +
-	"\x17floatilla/v1/pack.proto\x12\ffloatilla.v1\"\xeb\x03\n" +
+	"\x17floatilla/v1/pack.proto\x12\ffloatilla.v1\"\x8a\x04\n" +
 	"\x0fProcessTypeSpec\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x10\n" +
@@ -433,7 +442,9 @@ const file_floatilla_v1_pack_proto_rawDesc = "" +
 	"\tworkflows\x18\t \x03(\v2,.floatilla.v1.ProcessTypeSpec.WorkflowsEntryR\tworkflows\x12)\n" +
 	"\x10default_workflow\x18\n" +
 	" \x01(\tR\x0fdefaultWorkflow\x12\x1a\n" +
-	"\bguidance\x18\v \x01(\tR\bguidance\x1aX\n" +
+	"\bguidance\x18\v \x01(\tR\bguidance\x12\x1d\n" +
+	"\n" +
+	"lane_order\x18\f \x01(\x05R\tlaneOrder\x1aX\n" +
 	"\x0eWorkflowsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x120\n" +
 	"\x05value\x18\x02 \x01(\v2\x1a.floatilla.v1.WorkflowSpecR\x05value:\x028\x01\"N\n" +

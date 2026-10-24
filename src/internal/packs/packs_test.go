@@ -16,7 +16,7 @@ func TestLoadDevPack(t *testing.T) {
 	for _, s := range r.All() {
 		names = append(names, s.Name)
 	}
-	if got := strings.Join(names, ","); got != "deploy,impl,plan" {
+	if got := strings.Join(names, ","); got != "plan,impl,deploy" {
 		t.Fatalf("types = %s", got)
 	}
 	impl, _ := r.Get("impl")

@@ -2,6 +2,7 @@ name: impl
 title: IMPLEMENTATION
 tag: IMPL
 legend_short: setup › impl › test › pr › review › fdbk › closed
+lane_order: 20
 image: floatilla/sandbox:dev
 stages: [setup, implementation, testing, pr, awaiting review, feedback implementation, closed]
 artefacts: [log, diff, tests, doc, pr]

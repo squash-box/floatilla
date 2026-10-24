@@ -59,7 +59,9 @@ message StageRecord {
 message ArtefactRef {
   string kind = 1;
   string title = 2;
-  // One-line summary for tiles and the detail rail, e.g. "7 files +184 −36".
+  // One-line summary for tiles and the detail rail, e.g. "+184 −36" or
+  // "✓41 ✗2". Several facts are separated by two spaces, each "label value",
+  // e.g. "env prod  checks 14/20  err 0.1%"; the UI mutes the labels.
   string summary = 3;
   // Where the full artefact lives (workspace path, URL, object key).
   string uri = 4;

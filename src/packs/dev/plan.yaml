@@ -2,6 +2,7 @@ name: plan
 title: PLANNING
 tag: PLAN
 legend_short: explore › spec › validate
+lane_order: 10
 image: floatilla/sandbox:dev
 stages: [exploration, specification, validation]
 artefacts: [log, doc]

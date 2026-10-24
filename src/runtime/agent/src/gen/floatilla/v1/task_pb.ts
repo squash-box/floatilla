@@ -144,7 +144,9 @@ export type ArtefactRef = Message<"floatilla.v1.ArtefactRef"> & {
   title: string;
 
   /**
-   * One-line summary for tiles and the detail rail, e.g. "7 files +184 −36".
+   * One-line summary for tiles and the detail rail, e.g. "+184 −36" or
+   * "✓41 ✗2". Several facts are separated by two spaces, each "label value",
+   * e.g. "env prod  checks 14/20  err 0.1%"; the UI mutes the labels.
    *
    * @generated from field: string summary = 3;
    */

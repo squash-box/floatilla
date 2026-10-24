@@ -22,9 +22,12 @@ import (
 	"github.com/squash-box/floatilla/src/internal/env"
 )
 
-const usage = `usage: floatilla <command> [flags]
+const usage = `usage: floatilla [command] [flags]
+
+With no command, floatilla opens the fleet manager TUI.
 
 commands:
+  tui      fleet manager TUI     floatilla tui [-demo] [-theme dark|light]
   submit   submit a task         floatilla submit -type impl -name auth-refactor -title "..." [-workflow w] [-input k=v ...]
   ls       list tasks            floatilla ls [-a]
   get      show one task         floatilla get <id|name>
@@ -46,8 +49,11 @@ type cli struct {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprint(os.Stderr, usage)
-		os.Exit(2)
+		os.Args = append(os.Args, "tui")
+	}
+	if a := os.Args[1]; a == "help" || a == "-h" || a == "--help" {
+		fmt.Print(usage)
+		return
 	}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
@@ -56,6 +62,7 @@ func main() {
 	cmds := map[string]func([]string) error{
 		"submit": c.submit, "ls": c.ls, "get": c.get, "watch": c.watch, "answer": c.answer,
 		"stop": c.stop, "pause": c.pause, "resume": c.resume, "event": c.event, "types": c.types,
+		"tui": c.tui,
 	}
 	fn, ok := cmds[os.Args[1]]
 	if !ok {

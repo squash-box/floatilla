@@ -49,7 +49,13 @@ func LoadDir(dir string) (*Registry, error) {
 	if len(r.types) == 0 {
 		return nil, fmt.Errorf("no process types found in %s", dir)
 	}
-	sort.Strings(r.order)
+	sort.Slice(r.order, func(i, j int) bool {
+		a, b := r.types[r.order[i]], r.types[r.order[j]]
+		if a.LaneOrder != b.LaneOrder {
+			return a.LaneOrder < b.LaneOrder
+		}
+		return a.Name < b.Name
+	})
 	return r, nil
 }
 
@@ -117,7 +123,7 @@ func (r *Registry) Get(name string) (*v1.ProcessTypeSpec, bool) {
 	return s, ok
 }
 
-// All returns the process types in name order.
+// All returns the process types in lane order.
 func (r *Registry) All() []*v1.ProcessTypeSpec {
 	out := make([]*v1.ProcessTypeSpec, 0, len(r.order))
 	for _, n := range r.order {

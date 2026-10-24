@@ -25,6 +25,8 @@ message ProcessTypeSpec {
   string default_workflow = 10;
   // Extra system-prompt guidance shared by every stage of this type.
   string guidance = 11;
+  // Lane position in the fleet UI, ascending (ties sort by name).
+  int32 lane_order = 12;
 }
 
 // PermissionPolicy decides tool calls in the supervisor. Tools not listed are

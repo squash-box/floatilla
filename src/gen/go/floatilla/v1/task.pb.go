@@ -371,7 +371,9 @@ type ArtefactRef struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Kind  string                 `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
 	Title string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	// One-line summary for tiles and the detail rail, e.g. "7 files +184 −36".
+	// One-line summary for tiles and the detail rail, e.g. "+184 −36" or
+	// "✓41 ✗2". Several facts are separated by two spaces, each "label value",
+	// e.g. "env prod  checks 14/20  err 0.1%"; the UI mutes the labels.
 	Summary string `protobuf:"bytes,3,opt,name=summary,proto3" json:"summary,omitempty"`
 	// Where the full artefact lives (workspace path, URL, object key).
 	Uri           string                 `protobuf:"bytes,4,opt,name=uri,proto3" json:"uri,omitempty"`

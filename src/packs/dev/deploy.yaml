@@ -2,6 +2,7 @@ name: deploy
 title: DEPLOY
 tag: DEPLOY
 legend_short: setup › deploy › verify
+lane_order: 30
 image: floatilla/sandbox:dev
 stages: [setup, deploy, verify]
 artefacts: [log, deploy]

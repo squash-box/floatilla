@@ -31,7 +31,8 @@ A container-driven agent harness. A control plane queues runs; per-type launcher
 | `runtime/agent` | The TypeScript agent loop (Anthropic Messages API, own tools), plus a scripted provider |
 | `packs/dev` | `plan`, `impl`, `deploy` process types |
 | `deploy/` | Dockerfile (`platform` and `sandbox` targets) and docker-compose |
-| `fleet-handoff/` | The TUI design handoff (not built yet) |
+| `internal/tui` | The fleet manager TUI (Bubble Tea + a cell canvas), built from `fleet-handoff/` |
+| `fleet-handoff/` | The TUI design handoff: spec, tokens, mockups |
 
 ## Quick start
 
@@ -40,6 +41,8 @@ make deps            # npm ci + go mod download
 make up              # build images, start nats/postgres/control/launchers
 make cli             # bin/floatilla
 
+bin/floatilla                       # the fleet manager TUI (? lists the keys)
+bin/floatilla tui -demo             # TUI on the sample fleet, no control plane needed
 bin/floatilla types
 bin/floatilla submit -type impl -name auth-refactor -title "Move sessions to rotating refresh tokens"
 bin/floatilla watch                 # fleet changes
@@ -49,6 +52,12 @@ bin/floatilla event auth-refactor pr.review -payload '{"state":"changes_requeste
 ```
 
 Without `ANTHROPIC_API_KEY`, sandboxes use the **scripted** provider: a deterministic plan that exercises tools, permission prompts, questions, approvals and parking, with no API calls. Export `ANTHROPIC_API_KEY` before `make up` to use Claude (default `claude-opus-5-5`, effort `high`; override with `FLOATILLA_MODEL` / `FLOATILLA_EFFORT`). The API listens on `localhost:7420` (`FLOATILLA_PORT`).
+
+## Fleet manager TUI
+
+`floatilla` with no arguments opens the TUI described in `fleet-handoff/SPEC.md`: lanes per process type, tiles with stage tracks, list mode under 100 columns, agent detail with a live log, and the idle screen. Answer prompts with `y`/`n` from any screen. Colour follows the SPEC §9 ladder (`COLORTERM`, 256, 16, `NO_COLOR`); the theme follows the terminal background, or set `-theme dark|light` / `FLOATILLA_THEME`. `z` (pin lanes) persists in `~/.config/floatilla/tui.json`.
+
+Decisions on SPEC §11: new agent is `+` (`n` only denies); `p`/`i`/`d` stay on the idle screen; stage progress comes from the agent's `report_progress`, else a 1-cell fill; plan/deploy detail reuse the impl frame with their declared artefacts; tile columns cap at 6 and the grid centres.
 
 ## Development
 
