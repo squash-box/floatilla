@@ -74,5 +74,7 @@ func run(log *slog.Logger) error {
 			MaxTokens: int32(env.Int("FLOATILLA_MAX_TOKENS", 64000)),
 		},
 		Heartbeat: env.Duration("FLOATILLA_HEARTBEAT", 10*time.Second),
+		Git:       supervisor.GitConfigFromEnv(),
+		Yolo:      env.Bool("FLOATILLA_YOLO", false),
 	}, b, req, log).Run(ctx)
 }

@@ -44,7 +44,12 @@ workflows:
         tools: [bash, read_file]
         prompt: |
           Commit the work with a clear message. If a remote is configured,
-          push the branch and open a pull request; publish a "pr" artefact.
+          push the branch (git push -u origin HEAD) and open a pull request
+          with gh pr create against the branch you started from. The body
+          summarises the change and the test result, and links
+          inputs.tracker.url if set. Publish a "pr" artefact whose uri is the
+          PR's URL. GitHub access is already configured; if pushing fails
+          for lack of credentials, ask the human rather than retrying.
       - stage: awaiting review
         kind: STAGE_KIND_PARK
         park_on: pr.review

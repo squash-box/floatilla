@@ -13,15 +13,17 @@ func TestDecide(t *testing.T) {
 		Ask:   []string{"bash", "write_file"},
 		Deny:  []string{"bash"},
 	}
-	cases := map[string]Decision{
-		"read_file":  Allow,
-		"write_file": Ask,
-		"bash":       Deny, // deny wins
-		"grep":       Deny, // unlisted
+	cases := map[string][2]Decision{ // {normal, yolo}
+		"read_file":  {Allow, Allow},
+		"write_file": {Ask, Allow},
+		"bash":       {Deny, Deny}, // deny wins, yolo or not
+		"grep":       {Deny, Deny}, // unlisted
 	}
 	for tool, want := range cases {
-		if got := Decide(p, tool); got != want {
-			t.Errorf("Decide(%s) = %v, want %v", tool, got, want)
+		for i, yolo := range []bool{false, true} {
+			if got := Decide(p, tool, yolo); got != want[i] {
+				t.Errorf("Decide(%s, yolo=%v) = %v, want %v", tool, yolo, got, want[i])
+			}
 		}
 	}
 }
