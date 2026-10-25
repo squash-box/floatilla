@@ -22,8 +22,11 @@ workflows:
         tools: [bash, read_file, list_files]
         prompt: |
           Prepare the workspace. If inputs.repo is set and the workspace is
-          empty, clone it; create a branch named agent/<task name>. Install
-          dependencies if the project needs them.
+          empty, clone it; create a branch named agent/<task name>. If
+          inputs.after_branches is set (comma-separated), this task builds on
+          that finished work: fetch each branch and merge it into your branch
+          unless the base already contains it. Install dependencies if the
+          project needs them.
       - stage: implementation
         kind: STAGE_KIND_AGENT
         tools: [read_file, list_files, grep, write_file, edit_file, bash]

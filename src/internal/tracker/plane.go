@@ -309,6 +309,21 @@ func (p *Plane) Link(ctx context.Context, itemID, link, title string) error {
 	return p.do(ctx, http.MethodPost, p.proj("issues/"+itemID+"/links/"), map[string]string{"url": link, "title": title}, nil)
 }
 
+func (p *Plane) BlockedBy(ctx context.Context, itemID string) ([]string, error) {
+	var rel struct {
+		BlockedBy []string `json:"blocked_by"`
+	}
+	if err := p.do(ctx, http.MethodGet, p.proj("work-items/"+itemID+"/relations/"), nil, &rel); err != nil {
+		return nil, err
+	}
+	return rel.BlockedBy, nil
+}
+
+func (p *Plane) Block(ctx context.Context, itemID string, blockerIDs []string) error {
+	body := map[string]any{"relation_type": "blocked_by", "issues": blockerIDs}
+	return p.do(ctx, http.MethodPost, p.proj("work-items/"+itemID+"/relations/"), body, nil)
+}
+
 func (p *Plane) Group(ctx context.Context, name, description string, itemIDs []string) error {
 	var mod struct {
 		ID string `json:"id"`

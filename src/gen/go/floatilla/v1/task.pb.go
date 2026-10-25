@@ -458,7 +458,10 @@ type Story struct {
 	Description        string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	AcceptanceCriteria []string `protobuf:"bytes,4,rep,name=acceptance_criteria,json=acceptanceCriteria,proto3" json:"acceptance_criteria,omitempty"`
 	// urgent | high | medium | low | none
-	Priority      string `protobuf:"bytes,5,opt,name=priority,proto3" json:"priority,omitempty"`
+	Priority string `protobuf:"bytes,5,opt,name=priority,proto3" json:"priority,omitempty"`
+	// Keys of stories in the same plan that must be done before this one
+	// starts.
+	DependsOn     []string `protobuf:"bytes,6,rep,name=depends_on,json=dependsOn,proto3" json:"depends_on,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -526,6 +529,13 @@ func (x *Story) GetPriority() string {
 		return x.Priority
 	}
 	return ""
+}
+
+func (x *Story) GetDependsOn() []string {
+	if x != nil {
+		return x.DependsOn
+	}
+	return nil
 }
 
 // Task is the long-lived unit the fleet UI calls an "agent". It outlives any
@@ -843,13 +853,15 @@ const file_floatilla_v1_task_proto_rawDesc = "" +
 	"\asummary\x18\x03 \x01(\tR\asummary\x12\x10\n" +
 	"\x03uri\x18\x04 \x01(\tR\x03uri\x129\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x9e\x01\n" +
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xbd\x01\n" +
 	"\x05Story\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12/\n" +
 	"\x13acceptance_criteria\x18\x04 \x03(\tR\x12acceptanceCriteria\x12\x1a\n" +
-	"\bpriority\x18\x05 \x01(\tR\bpriority\"\xce\t\n" +
+	"\bpriority\x18\x05 \x01(\tR\bpriority\x12\x1d\n" +
+	"\n" +
+	"depends_on\x18\x06 \x03(\tR\tdependsOn\"\xce\t\n" +
 	"\x04Task\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12!\n" +

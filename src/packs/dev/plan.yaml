@@ -42,7 +42,11 @@ workflows:
           Break the plan into implementation stories and publish them with
           publish_stories (spec_path docs/spec.md). Each story is one
           implementation agent's work: independently buildable and testable,
-          with concrete acceptance criteria. Then ask the human to approve the
+          with concrete acceptance criteria. Stories run in parallel unless
+          you declare depends_on: give a story depends_on whenever it needs
+          another story's code (e.g. it uses fields, APIs or files that story
+          adds). Keep chains short so as much as possible runs at once. Then
+          ask the human to approve the
           spec and stories with ask_human (kind approval), stating the goal
           and the number of stories in one line; the reviewer sees the spec
           and the story list alongside it. If they reject it,

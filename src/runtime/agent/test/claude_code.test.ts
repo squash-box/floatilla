@@ -196,6 +196,20 @@ describe("publish_stories", () => {
       const escaped = await tools.publish_stories!.handler({ spec_path: "../../etc/passwd", stories: [story] } as never, {});
       assert.ok(escaped.isError);
       assert.equal(host.of("storiesPublished").length, 1);
+
+      const dep = (key: string, on: string[]) => ({ ...story, key, depends_on: on });
+      const chained = await tools.publish_stories!.handler({ spec_path: "docs/spec.md", stories: [dep("s1", []), dep("s2", ["s1"])] } as never, {});
+      assert.ok(!chained.isError, JSON.stringify(chained));
+      assert.deepEqual((host.of("storiesPublished")[1]?.stories as { dependsOn: string[] }[]).map((s) => s.dependsOn), [[], ["s1"]]);
+      for (const [stories, msg] of [
+        [[dep("s1", ["s9"])], /unknown story s9/],
+        [[dep("s1", ["s1"])], /depends on itself/],
+        [[dep("s1", ["s2"]), dep("s2", ["s3"]), dep("s3", ["s1"])], /cycle: s1 → s2 → s3 → s1/],
+      ] as const) {
+        const res = await tools.publish_stories!.handler({ spec_path: "docs/spec.md", stories } as never, {});
+        assert.ok(res.isError);
+        assert.match((res.content[0] as { text: string }).text, msg);
+      }
     } finally {
       await rm(ws, { recursive: true, force: true });
     }

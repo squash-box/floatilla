@@ -43,6 +43,9 @@ type Link struct {
 	Accepted   bool
 	PRLinked   bool
 	Dispatches int
+	// BlockedOn lists the open blockers (item keys) last reported while the
+	// item waited in Ready; empty when it isn't blocked.
+	BlockedOn string
 	// Settled: the task finished and the item shows it; nothing left to sync.
 	Settled bool
 }
@@ -147,6 +150,10 @@ func (s *Sync) Tick(ctx context.Context) error {
 	}
 
 	// People's moves on the board.
+	byID := map[string]Item{}
+	for _, it := range items {
+		byID[it.ID] = it
+	}
 	touched := map[string]bool{}
 	for _, it := range items {
 		l := links[it.ID]
@@ -157,7 +164,7 @@ func (s *Sync) Tick(ctx context.Context) error {
 		var err error
 		switch it.State {
 		case StateReady:
-			err = s.onReady(ctx, it, l, task, tasks)
+			err = s.onReady(ctx, it, l, task, board{items: byID, links: links, tasks: tasks})
 			touched[it.ID] = true
 		case StateDone:
 			switch {
@@ -208,6 +215,8 @@ func (s *Sync) publishPlan(ctx context.Context, plan *v1.Task, items []Item, lin
 	}
 	parent := plan.Inputs["tracker.item"]
 	var ids []string
+	byKey := map[string]string{}
+	created := map[string]bool{}
 	fresh := true
 	for _, st := range plan.Stories {
 		ext := "plan/" + plan.Id + "/" + st.Key
@@ -223,14 +232,32 @@ func (s *Sync) publishPlan(ctx context.Context, plan *v1.Task, items []Item, lin
 			if err != nil {
 				return err
 			}
+			created[st.Key] = true
 		}
 		ids = append(ids, it.ID)
+		byKey[st.Key] = it.ID
 		if links[it.ID] == nil {
 			l := &Link{ItemID: it.ID, ItemKey: it.Key, URL: it.URL, PlanTaskID: plan.Id, StoryKey: st.Key, SyncedState: s.PublishState, Since: s.clock()}
 			if err := s.Links.SaveTrackerLink(ctx, *l); err != nil {
 				return err
 			}
 			links[it.ID] = l
+		}
+	}
+	for _, st := range plan.Stories {
+		if !created[st.Key] || len(st.DependsOn) == 0 {
+			continue
+		}
+		var blockers []string
+		for _, d := range st.DependsOn {
+			if id := byKey[d]; id != "" {
+				blockers = append(blockers, id)
+			}
+		}
+		if len(blockers) > 0 {
+			if err := s.Tracker.Block(ctx, byKey[st.Key], blockers); err != nil {
+				return fmt.Errorf("story %s dependencies: %w", st.Key, err)
+			}
 		}
 	}
 	// Stories of a plan item become its children; others get a group. A
@@ -244,10 +271,24 @@ func (s *Sync) publishPlan(ctx context.Context, plan *v1.Task, items []Item, lin
 	return s.Links.MarkPlanPublished(ctx, plan.Id)
 }
 
-func (s *Sync) onReady(ctx context.Context, it Item, l *Link, task *v1.Task, tasks map[string]*v1.Task) error {
+// board is one pass's view of the tracker and the fleet.
+type board struct {
+	items map[string]Item
+	links map[string]*Link
+	tasks map[string]*v1.Task
+}
+
+func (s *Sync) onReady(ctx context.Context, it Item, l *Link, task *v1.Task, b board) error {
 	switch {
 	case task == nil || terminal(task):
-		return s.dispatch(ctx, it, l, tasks)
+		blockers, err := s.Tracker.BlockedBy(ctx, it.ID)
+		if err != nil {
+			return err
+		}
+		if open := openBlockers(blockers, b.items); len(open) > 0 {
+			return s.wait(ctx, it, l, open)
+		}
+		return s.dispatch(ctx, it, l, blockers, b)
 	case task.Status == v1.TaskStatus_TASK_STATUS_WAITING && task.Prompt != nil:
 		// Handed back while blocked: comments since are the answer, and an
 		// approval handed back is a rejection.
@@ -260,14 +301,59 @@ func (s *Sync) onReady(ctx context.Context, it Item, l *Link, task *v1.Task, tas
 	}
 }
 
-func (s *Sync) dispatch(ctx context.Context, it Item, l *Link, tasks map[string]*v1.Task) error {
+// openBlockers returns the blockers not yet Done or Cancelled. Blockers
+// outside the project (not on the board) don't hold anything up.
+func openBlockers(ids []string, items map[string]Item) []Item {
+	var open []Item
+	for _, id := range ids {
+		if b, ok := items[id]; ok && b.State != StateDone && b.State != StateCancelled {
+			open = append(open, b)
+		}
+	}
+	return open
+}
+
+// wait leaves a blocked item in Ready, saying once what it waits for; it
+// starts on the pass after its blockers are done.
+func (s *Sync) wait(ctx context.Context, it Item, l *Link, open []Item) error {
+	var keys, desc []string
+	for _, b := range open {
+		keys = append(keys, b.Key)
+		state := string(b.State)
+		if state == "" {
+			state = "not started"
+		}
+		desc = append(desc, fmt.Sprintf("%s (%s)", b.Key, state))
+	}
+	if l == nil {
+		l = &Link{ItemID: it.ID, ItemKey: it.Key, URL: it.URL, Since: s.clock()}
+	}
+	if joined := strings.Join(keys, ","); l.BlockedOn != joined {
+		l.BlockedOn = joined
+		if err := s.Tracker.Comment(ctx, it.ID, fmt.Sprintf("queued: blocked by %s. Starts when %s done.", strings.Join(desc, ", "), plural(len(open), "it is", "they are"))); err != nil {
+			return err
+		}
+		s.Log.Info("tracker item blocked", "item", it.Key, "on", joined)
+		return s.Links.SaveTrackerLink(ctx, *l)
+	}
+	return nil
+}
+
+func plural(n int, one, many string) string {
+	if n == 1 {
+		return one
+	}
+	return many
+}
+
+func (s *Sync) dispatch(ctx context.Context, it Item, l *Link, blockers []string, b board) error {
 	if l == nil {
 		l = &Link{ItemID: it.ID}
 	}
-	l.ItemKey, l.URL = it.Key, it.URL
+	l.ItemKey, l.URL, l.BlockedOn = it.Key, it.URL, ""
 	var plan *v1.Task
 	if l.PlanTaskID != "" {
-		plan = tasks[l.PlanTaskID]
+		plan = b.tasks[l.PlanTaskID]
 	}
 
 	processType := s.ImplType
@@ -285,17 +371,35 @@ func (s *Sync) dispatch(ctx context.Context, it Item, l *Link, tasks map[string]
 		inputs["repo"] = m[1]
 	}
 	inputs["tracker.item"], inputs["tracker.key"], inputs["tracker.url"] = it.ID, it.Key, it.URL
+	// The work this item builds on may not be merged yet: hand over the
+	// blockers' branches.
+	var after, afterDesc []string
+	for _, id := range blockers {
+		bl := b.links[id]
+		if bl == nil || b.tasks[bl.TaskID] == nil {
+			continue
+		}
+		branch := b.tasks[bl.TaskID].Branch
+		after = append(after, branch)
+		afterDesc = append(afterDesc, fmt.Sprintf("%s (branch %s)", b.items[id].Key, branch))
+	}
+	if len(after) > 0 {
+		inputs["after_branches"] = strings.Join(after, ",")
+	}
 
-	var b strings.Builder
-	fmt.Fprintf(&b, "Tracker item %s: %s\n%s\n\n%s\n", it.Key, it.Title, it.URL, strings.TrimSpace(it.Description))
+	var b2 strings.Builder
+	fmt.Fprintf(&b2, "Tracker item %s: %s\n%s\n\n%s\n", it.Key, it.Title, it.URL, strings.TrimSpace(it.Description))
+	if len(afterDesc) > 0 {
+		fmt.Fprintf(&b2, "\nThis builds on finished work that may not be merged yet: %s. Merge those branches into yours first if the base doesn't contain them.\n", strings.Join(afterDesc, ", "))
+	}
 	if plan != nil && plan.Spec != "" {
-		fmt.Fprintf(&b, "\nThis story is part of plan %q. The plan's spec, for context (implement only this story):\n\n%s\n", plan.Name, plan.Spec)
+		fmt.Fprintf(&b2, "\nThis story is part of plan %q. The plan's spec, for context (implement only this story):\n\n%s\n", plan.Name, plan.Spec)
 	}
 
 	name := taskName(it.Key, it.Title, l.Dispatches+1)
 	req := &v1.SubmitTaskRequest{
 		ProcessType: processType, Name: name, Title: it.Title,
-		Instructions: b.String(), Inputs: inputs,
+		Instructions: b2.String(), Inputs: inputs,
 	}
 	if plan != nil {
 		req.ParentId = plan.Id
@@ -307,6 +411,11 @@ func (s *Sync) dispatch(ctx context.Context, it Item, l *Link, tasks map[string]
 	s.Log.Info("tracker item dispatched", "item", it.Key, "task", t.Id, "type", processType, "name", name)
 	l.TaskID, l.Dispatches = t.Id, l.Dispatches+1
 	l.Accepted, l.PRLinked, l.Settled = false, false, false
+	// Later items in this pass see it started.
+	b.links[it.ID], b.tasks[t.Id] = l, t
+	started := it
+	started.State = StateWorking
+	b.items[it.ID] = started
 	return s.setState(ctx, it, l, StateWorking, fmt.Sprintf("%s agent %s picked this up", processType, name))
 }
 

@@ -482,6 +482,73 @@ func TestSyncAnswersQuestionsAndPermissionsFromTheBoard(t *testing.T) {
 	}
 }
 
+func TestSyncHoldsBlockedItemsUntilBlockersAreDone(t *testing.T) {
+	h := newHarness(t)
+	plan := approvedPlan()
+	plan.Stories = append(plan.Stories, &v1.Story{Key: "s3", Title: "Dashboard for retries", DependsOn: []string{"s1", "s2"}})
+	plan.Stories[1].DependsOn = []string{"s1"}
+	h.fleet.tasks = []*v1.Task{plan}
+	h.tick()
+	s1, s2, s3 := h.plane.issues[0]["id"].(string), h.plane.issues[1]["id"].(string), h.plane.issues[2]["id"].(string)
+	if got := h.plane.blockedBy; len(got) != 2 || strings.Join(got[s2], ",") != s1 || strings.Join(got[s3], ",") != s1+","+s2 {
+		t.Fatalf("relations: %v", got)
+	}
+
+	// Everything handed over at once: only s1 starts.
+	for _, id := range []string{s1, s2, s3} {
+		h.plane.move(id, "Ready for agent")
+	}
+	h.tick()
+	if len(h.fleet.tasks) != 2 || h.fleet.tasks[1].Inputs["tracker.item"] != s1 {
+		t.Fatalf("tasks: %v", h.fleet.tasks)
+	}
+	if got := h.plane.stateName(s2); got != "Ready for agent" {
+		t.Fatalf("blocked item moved to %q", got)
+	}
+	if c := h.lastComment(s3); c != "floatilla · queued: blocked by FLOAT-1 (working), FLOAT-2 (ready). Starts when they are done." {
+		t.Fatalf("comment: %q", c)
+	}
+	h.tick()
+	if n := len(h.comments(s3)); n != 1 {
+		t.Fatalf("blocked comment repeated: %d comments", n)
+	}
+
+	// s1 accepted: s2 starts on s1's branch; s3 still waits on s2.
+	first := h.fleet.tasks[1]
+	first.Branch = "agent/" + first.Name
+	first.Status = v1.TaskStatus_TASK_STATUS_SUCCEEDED
+	h.tick() // the item follows its task to Done
+	h.tick() // s2 sees its blocker done
+	if len(h.fleet.tasks) != 3 {
+		t.Fatalf("tasks: %d", len(h.fleet.tasks))
+	}
+	second := h.fleet.tasks[2]
+	if second.Inputs["tracker.item"] != s2 || second.Inputs["after_branches"] != "agent/float-1-add-retry-with-jitter" {
+		t.Fatalf("second: %v", second.Inputs)
+	}
+	if !strings.Contains(second.Instructions, "FLOAT-1 (branch agent/float-1-add-retry-with-jitter)") {
+		t.Fatalf("instructions: %s", second.Instructions)
+	}
+	if c := h.lastComment(s3); !strings.Contains(c, "blocked by FLOAT-2 (working).") {
+		t.Fatalf("comment: %q", c)
+	}
+	if l := h.links.links[s2]; l.BlockedOn != "" {
+		t.Fatalf("dispatched link still blocked: %+v", l)
+	}
+}
+
+func TestSyncIgnoresCancelledAndOffBoardBlockers(t *testing.T) {
+	h := newHarness(t)
+	ctx := context.Background()
+	gone, _ := h.sync.Tracker.Create(ctx, NewItem{Title: "dropped", State: StateCancelled})
+	it, _ := h.sync.Tracker.Create(ctx, NewItem{Title: "x", State: StateReady})
+	h.plane.blockedBy[it.ID] = []string{gone.ID, "item-in-another-project"}
+	h.tick()
+	if len(h.fleet.tasks) != 1 {
+		t.Fatal("cancelled and unknown blockers must not hold the item")
+	}
+}
+
 func TestTaskName(t *testing.T) {
 	for _, c := range []struct {
 		key, title string

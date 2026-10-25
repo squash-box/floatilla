@@ -91,6 +91,10 @@ type Tracker interface {
 	// Comments returns people's comments created after since.
 	Comments(ctx context.Context, itemID string, since time.Time) ([]string, error)
 	Link(ctx context.Context, itemID, url, title string) error
+	// BlockedBy returns the ids of items that block this one.
+	BlockedBy(ctx context.Context, itemID string) ([]string, error)
+	// Block records that blockerIDs block the item.
+	Block(ctx context.Context, itemID string, blockerIDs []string) error
 	// Group collects one plan's items (a Plane module, a Jira epic) when the
 	// plan didn't come from an item they can be children of.
 	Group(ctx context.Context, name, description string, itemIDs []string) error

@@ -38,6 +38,7 @@ create table if not exists tracker_links (
   dispatches   integer     not null default 0,
   settled      boolean     not null default false
 );
+alter table tracker_links add column if not exists blocked_on text not null default '';
 
 create table if not exists tracker_plans (
   plan_task_id text        primary key,

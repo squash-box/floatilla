@@ -12,7 +12,7 @@ var _ tracker.Links = (*Store)(nil)
 
 func (s *Store) TrackerLinks(ctx context.Context) ([]tracker.Link, error) {
 	rows, err := s.pool.Query(ctx,
-		`select item_id, item_key, url, task_id, plan_task_id, story_key, synced_state, since, accepted, pr_linked, dispatches, settled
+		`select item_id, item_key, url, task_id, plan_task_id, story_key, synced_state, since, accepted, pr_linked, dispatches, settled, blocked_on
 		 from tracker_links order by item_id`)
 	if err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func (s *Store) TrackerLinks(ctx context.Context) ([]tracker.Link, error) {
 	return pgx.CollectRows(rows, func(r pgx.CollectableRow) (tracker.Link, error) {
 		var l tracker.Link
 		var state string
-		err := r.Scan(&l.ItemID, &l.ItemKey, &l.URL, &l.TaskID, &l.PlanTaskID, &l.StoryKey, &state, &l.Since, &l.Accepted, &l.PRLinked, &l.Dispatches, &l.Settled)
+		err := r.Scan(&l.ItemID, &l.ItemKey, &l.URL, &l.TaskID, &l.PlanTaskID, &l.StoryKey, &state, &l.Since, &l.Accepted, &l.PRLinked, &l.Dispatches, &l.Settled, &l.BlockedOn)
 		l.SyncedState = tracker.State(state)
 		return l, err
 	})
@@ -28,11 +28,11 @@ func (s *Store) TrackerLinks(ctx context.Context) ([]tracker.Link, error) {
 
 func (s *Store) SaveTrackerLink(ctx context.Context, l tracker.Link) error {
 	_, err := s.pool.Exec(ctx,
-		`insert into tracker_links (item_id, item_key, url, task_id, plan_task_id, story_key, synced_state, since, accepted, pr_linked, dispatches, settled)
-		 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+		`insert into tracker_links (item_id, item_key, url, task_id, plan_task_id, story_key, synced_state, since, accepted, pr_linked, dispatches, settled, blocked_on)
+		 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 		 on conflict (item_id) do update set item_key = $2, url = $3, task_id = $4, plan_task_id = $5, story_key = $6,
-		   synced_state = $7, since = $8, accepted = $9, pr_linked = $10, dispatches = $11, settled = $12`,
-		l.ItemID, l.ItemKey, l.URL, l.TaskID, l.PlanTaskID, l.StoryKey, string(l.SyncedState), l.Since, l.Accepted, l.PRLinked, l.Dispatches, l.Settled)
+		   synced_state = $7, since = $8, accepted = $9, pr_linked = $10, dispatches = $11, settled = $12, blocked_on = $13`,
+		l.ItemID, l.ItemKey, l.URL, l.TaskID, l.PlanTaskID, l.StoryKey, string(l.SyncedState), l.Since, l.Accepted, l.PRLinked, l.Dispatches, l.Settled, l.BlockedOn)
 	return err
 }
 

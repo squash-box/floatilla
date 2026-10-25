@@ -24,8 +24,10 @@ type fakePlane struct {
 	comments map[string][]map[string]any
 	links    map[string][]string
 	modules  map[string][]string
-	seq      int
-	ids      int
+	// blockedBy maps an issue to the issues blocking it.
+	blockedBy map[string][]string
+	seq       int
+	ids       int
 	// throttle answers the next n requests with 429.
 	throttle int
 	requests int
@@ -35,7 +37,7 @@ const fakeProject = "proj-1"
 
 func newFakePlane(t *testing.T) (*fakePlane, *Plane) {
 	f := &fakePlane{
-		t: t, comments: map[string][]map[string]any{}, links: map[string][]string{}, modules: map[string][]string{},
+		t: t, comments: map[string][]map[string]any{}, links: map[string][]string{}, modules: map[string][]string{}, blockedBy: map[string][]string{},
 		states: []map[string]any{
 			{"id": "st-backlog", "name": "Backlog", "group": "backlog"},
 			{"id": "st-todo", "name": "Todo", "group": "unstarted"},
@@ -116,6 +118,16 @@ func (f *fakePlane) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		f.json(w, body)
 	case parts[0] == "issues" && len(parts) == 3 && parts[2] == "links":
 		f.links[parts[1]] = append(f.links[parts[1]], body["url"].(string))
+		f.json(w, body)
+	case parts[0] == "work-items" && len(parts) == 3 && parts[2] == "relations" && r.Method == http.MethodGet:
+		f.json(w, map[string]any{"blocked_by": append([]string{}, f.blockedBy[parts[1]]...), "blocking": []string{}})
+	case parts[0] == "work-items" && len(parts) == 3 && parts[2] == "relations":
+		if body["relation_type"] != "blocked_by" {
+			f.t.Errorf("relation_type %v", body["relation_type"])
+		}
+		for _, id := range body["issues"].([]any) {
+			f.blockedBy[parts[1]] = append(f.blockedBy[parts[1]], id.(string))
+		}
 		f.json(w, body)
 	case parts[0] == "modules" && len(parts) == 1:
 		id := f.id("mod")

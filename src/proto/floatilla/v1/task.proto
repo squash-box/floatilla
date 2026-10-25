@@ -79,6 +79,9 @@ message Story {
   repeated string acceptance_criteria = 4;
   // urgent | high | medium | low | none
   string priority = 5;
+  // Keys of stories in the same plan that must be done before this one
+  // starts.
+  repeated string depends_on = 6;
 }
 
 // Task is the long-lived unit the fleet UI calls an "agent". It outlives any
