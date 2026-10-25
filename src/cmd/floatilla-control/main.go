@@ -19,6 +19,7 @@ import (
 	"github.com/squash-box/floatilla/src/internal/fsm"
 	"github.com/squash-box/floatilla/src/internal/packs"
 	"github.com/squash-box/floatilla/src/internal/store"
+	"github.com/squash-box/floatilla/src/internal/tracker"
 )
 
 func main() {
@@ -68,8 +69,11 @@ func run(log *slog.Logger) error {
 	protocols.SetUnencryptedHTTP2(true)
 	srv := &http.Server{Addr: env.String("FLOATILLA_LISTEN", ":8080"), Handler: mux, Protocols: protocols}
 
-	errc := make(chan error, 2)
+	errc := make(chan error, 3)
 	go func() { errc <- ctl.Run(ctx) }()
+	if sync := trackerSync(ctl, st, log); sync != nil {
+		go func() { errc <- sync.Run(ctx) }()
+	}
 	go func() {
 		log.Info("api listening", "addr", srv.Addr)
 		if err := srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
@@ -85,4 +89,33 @@ func run(log *slog.Logger) error {
 	defer cancelShutdown()
 	_ = srv.Shutdown(shutdown)
 	return err
+}
+
+// trackerSync configures the story tracker sync from the environment; nil
+// when no tracker is configured.
+func trackerSync(ctl *control.Control, st *store.Store, log *slog.Logger) *tracker.Sync {
+	key := env.String("PLANE_API_KEY", "")
+	if key == "" {
+		log.Info("no story tracker configured (set PLANE_API_KEY)")
+		return nil
+	}
+	plane := tracker.NewPlane(tracker.PlaneConfig{
+		BaseURL:   env.String("PLANE_BASE_URL", "https://api.plane.so"),
+		AppURL:    env.String("PLANE_APP_URL", ""),
+		APIKey:    key,
+		Workspace: env.String("PLANE_WORKSPACE", ""),
+		Project:   env.String("PLANE_PROJECT", ""),
+	})
+	publish := tracker.StateBacklog
+	if env.String("FLOATILLA_TRACKER_PUBLISH_TO", "backlog") == "ready" {
+		publish = tracker.StateReady
+	}
+	return &tracker.Sync{
+		Tracker: plane, Fleet: ctl, Links: st, Log: log.With("component", "tracker"),
+		ImplType:     env.String("FLOATILLA_TRACKER_PROCESS_TYPE", "impl"),
+		PlanType:     env.String("FLOATILLA_TRACKER_PLAN_TYPE", "plan"),
+		Repo:         env.String("FLOATILLA_TRACKER_REPO", ""),
+		PublishState: publish,
+		Interval:     env.Duration("FLOATILLA_TRACKER_INTERVAL", 30*time.Second),
+	}
 }

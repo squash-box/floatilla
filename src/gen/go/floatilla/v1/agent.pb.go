@@ -480,6 +480,7 @@ type AgentMessage struct {
 	//	*AgentMessage_ToolRequest
 	//	*AgentMessage_Ask
 	//	*AgentMessage_Finished
+	//	*AgentMessage_StoriesPublished
 	Body          isAgentMessage_Body `protobuf_oneof:"body"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -603,6 +604,15 @@ func (x *AgentMessage) GetFinished() *RunFinished {
 	return nil
 }
 
+func (x *AgentMessage) GetStoriesPublished() *StoriesPublished {
+	if x != nil {
+		if x, ok := x.Body.(*AgentMessage_StoriesPublished); ok {
+			return x.StoriesPublished
+		}
+	}
+	return nil
+}
+
 type isAgentMessage_Body interface {
 	isAgentMessage_Body()
 }
@@ -643,6 +653,10 @@ type AgentMessage_Finished struct {
 	Finished *RunFinished `protobuf:"bytes,9,opt,name=finished,proto3,oneof"`
 }
 
+type AgentMessage_StoriesPublished struct {
+	StoriesPublished *StoriesPublished `protobuf:"bytes,10,opt,name=stories_published,json=storiesPublished,proto3,oneof"`
+}
+
 func (*AgentMessage_StageStarted) isAgentMessage_Body() {}
 
 func (*AgentMessage_StageFinished) isAgentMessage_Body() {}
@@ -660,6 +674,8 @@ func (*AgentMessage_ToolRequest) isAgentMessage_Body() {}
 func (*AgentMessage_Ask) isAgentMessage_Body() {}
 
 func (*AgentMessage_Finished) isAgentMessage_Body() {}
+
+func (*AgentMessage_StoriesPublished) isAgentMessage_Body() {}
 
 var File_floatilla_v1_agent_proto protoreflect.FileDescriptor
 
@@ -698,7 +714,7 @@ const file_floatilla_v1_agent_proto_rawDesc = "" +
 	"\n" +
 	"input_json\x18\x04 \x01(\tR\tinputJson\"8\n" +
 	"\bAskHuman\x12,\n" +
-	"\x06prompt\x18\x01 \x01(\v2\x14.floatilla.v1.PromptR\x06prompt\"\x90\x04\n" +
+	"\x06prompt\x18\x01 \x01(\v2\x14.floatilla.v1.PromptR\x06prompt\"\xdf\x04\n" +
 	"\fAgentMessage\x12A\n" +
 	"\rstage_started\x18\x01 \x01(\v2\x1a.floatilla.v1.StageStartedH\x00R\fstageStarted\x12D\n" +
 	"\x0estage_finished\x18\x02 \x01(\v2\x1b.floatilla.v1.StageFinishedH\x00R\rstageFinished\x124\n" +
@@ -708,7 +724,9 @@ const file_floatilla_v1_agent_proto_rawDesc = "" +
 	"\x05usage\x18\x06 \x01(\v2\x18.floatilla.v1.UsageDeltaH\x00R\x05usage\x12>\n" +
 	"\ftool_request\x18\a \x01(\v2\x19.floatilla.v1.ToolRequestH\x00R\vtoolRequest\x12*\n" +
 	"\x03ask\x18\b \x01(\v2\x16.floatilla.v1.AskHumanH\x00R\x03ask\x127\n" +
-	"\bfinished\x18\t \x01(\v2\x19.floatilla.v1.RunFinishedH\x00R\bfinishedB\x06\n" +
+	"\bfinished\x18\t \x01(\v2\x19.floatilla.v1.RunFinishedH\x00R\bfinished\x12M\n" +
+	"\x11stories_published\x18\n" +
+	" \x01(\v2\x1e.floatilla.v1.StoriesPublishedH\x00R\x10storiesPublishedB\x06\n" +
 	"\x04bodyBEZCgithub.com/squash-box/floatilla/src/gen/go/floatilla/v1;floatillav1b\x06proto3"
 
 var (
@@ -746,6 +764,7 @@ var file_floatilla_v1_agent_proto_goTypes = []any{
 	(*ArtefactRef)(nil),       // 18: floatilla.v1.ArtefactRef
 	(*UsageDelta)(nil),        // 19: floatilla.v1.UsageDelta
 	(*RunFinished)(nil),       // 20: floatilla.v1.RunFinished
+	(*StoriesPublished)(nil),  // 21: floatilla.v1.StoriesPublished
 }
 var file_floatilla_v1_agent_proto_depIdxs = []int32{
 	7,  // 0: floatilla.v1.RunInit.task:type_name -> floatilla.v1.Task
@@ -767,11 +786,12 @@ var file_floatilla_v1_agent_proto_depIdxs = []int32{
 	4,  // 16: floatilla.v1.AgentMessage.tool_request:type_name -> floatilla.v1.ToolRequest
 	5,  // 17: floatilla.v1.AgentMessage.ask:type_name -> floatilla.v1.AskHuman
 	20, // 18: floatilla.v1.AgentMessage.finished:type_name -> floatilla.v1.RunFinished
-	19, // [19:19] is the sub-list for method output_type
-	19, // [19:19] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	21, // 19: floatilla.v1.AgentMessage.stories_published:type_name -> floatilla.v1.StoriesPublished
+	20, // [20:20] is the sub-list for method output_type
+	20, // [20:20] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_floatilla_v1_agent_proto_init() }
@@ -798,6 +818,7 @@ func file_floatilla_v1_agent_proto_init() {
 		(*AgentMessage_ToolRequest)(nil),
 		(*AgentMessage_Ask)(nil),
 		(*AgentMessage_Finished)(nil),
+		(*AgentMessage_StoriesPublished)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

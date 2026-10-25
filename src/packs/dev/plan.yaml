@@ -22,8 +22,11 @@ workflows:
         kind: STAGE_KIND_AGENT
         tools: [read_file, list_files, grep, bash]
         prompt: |
-          Explore the workspace and any inputs to understand the problem.
-          Record findings and open questions in notes/exploration.md.
+          If inputs.repo is set and the workspace is empty, clone it into
+          the workspace (git clone <repo> .) so you plan against the real
+          code. Then explore the workspace and any inputs to understand the
+          problem. Record findings and open questions in
+          notes/exploration.md.
       - stage: specification
         kind: STAGE_KIND_AGENT
         tools: [read_file, list_files, grep, write_file, edit_file]
@@ -35,6 +38,14 @@ workflows:
         kind: STAGE_KIND_AGENT
         tools: [read_file, edit_file]
         prompt: |
-          Re-read docs/spec.md critically and resolve anything ambiguous. Then
-          ask the human to approve the spec with ask_human (kind approval).
-          If they reject it, revise using their note and ask again.
+          Re-read docs/spec.md critically and resolve anything ambiguous.
+          Break the plan into implementation stories and publish them with
+          publish_stories (spec_path docs/spec.md). Each story is one
+          implementation agent's work: independently buildable and testable,
+          with concrete acceptance criteria. Then ask the human to approve the
+          spec and stories with ask_human (kind approval), stating the goal
+          and the number of stories in one line; the reviewer sees the spec
+          and the story list alongside it. If they reject it,
+          revise using their note, publish the stories again (same keys for
+          the same stories) and ask again. On approval the stories go to the
+          story tracker.

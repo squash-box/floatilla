@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file floatilla/v1/task.proto.
  */
 export const file_floatilla_v1_task: GenFile = /*@__PURE__*/
-  fileDesc("ChdmbG9hdGlsbGEvdjEvdGFzay5wcm90bxIMZmxvYXRpbGxhLnYxIloKBlByb21wdBIKCgJpZBgBIAEoCRImCgRraW5kGAIgASgOMhguZmxvYXRpbGxhLnYxLlByb21wdEtpbmQSDAoEdGV4dBgDIAEoCRIOCgZkZXRhaWwYBCABKAkifQoFVXNhZ2USFAoMaW5wdXRfdG9rZW5zGAEgASgDEhUKDW91dHB1dF90b2tlbnMYAiABKAMSGQoRY2FjaGVfcmVhZF90b2tlbnMYAyABKAMSGgoSY2FjaGVfd3JpdGVfdG9rZW5zGAQgASgDEhAKCGNvc3RfdXNkGAUgASgBIpwBCgtTdGFnZVJlY29yZBINCgVpbmRleBgBIAEoBRIMCgRuYW1lGAIgASgJEi4KCnN0YXJ0ZWRfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KC2ZpbmlzaGVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIPCgdzdW1tYXJ5GAUgASgJIngKC0FydGVmYWN0UmVmEgwKBGtpbmQYASABKAkSDQoFdGl0bGUYAiABKAkSDwoHc3VtbWFyeRgDIAEoCRILCgN1cmkYBCABKAkSLgoKdXBkYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi8AYKBFRhc2sSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIUCgxwcm9jZXNzX3R5cGUYAyABKAkSEAoId29ya2Zsb3cYBCABKAkSDQoFdGl0bGUYBSABKAkSFAoMaW5zdHJ1Y3Rpb25zGAYgASgJEi4KBmlucHV0cxgHIAMoCzIeLmZsb2F0aWxsYS52MS5UYXNrLklucHV0c0VudHJ5EhEKCXBhcmVudF9pZBgIIAEoCRIoCgZzdGF0dXMYCSABKA4yGC5mbG9hdGlsbGEudjEuVGFza1N0YXR1cxITCgtzdGFnZV9pbmRleBgKIAEoBRIbCg5zdGFnZV9wcm9ncmVzcxgLIAEoAkgAiAEBEikKBnN0YWdlcxgMIAMoCzIZLmZsb2F0aWxsYS52MS5TdGFnZVJlY29yZBIQCghhY3Rpdml0eRgNIAEoCRIMCgR0YWlsGA4gAygJEiQKBnByb21wdBgPIAEoCzIULmZsb2F0aWxsYS52MS5Qcm9tcHQSDwoHcGFya19vbhgQIAEoCRIiCgV1c2FnZRgRIAEoCzITLmZsb2F0aWxsYS52MS5Vc2FnZRIPCgdydW5fc2VxGBIgASgNEg8KB2F0dGVtcHQYEyABKA0SNAoQbGVhc2VfZXhwaXJlc19hdBgUIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDQoFZXJyb3IYFSABKAkSDgoGYnJhbmNoGBYgASgJEhQKDGNvbnRleHRfdXNlZBgXIAEoARIsCglhcnRlZmFjdHMYGCADKAsyGS5mbG9hdGlsbGEudjEuQXJ0ZWZhY3RSZWYSLgoKY3JlYXRlZF9hdBgZIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKc3RhcnRlZF9hdBgaIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoLZmluaXNoZWRfYXQYGyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYHCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wGi0KC0lucHV0c0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAFCEQoPX3N0YWdlX3Byb2dyZXNzKtYBCgpUYXNrU3RhdHVzEhsKF1RBU0tfU1RBVFVTX1VOU1BFQ0lGSUVEEAASFgoSVEFTS19TVEFUVVNfUVVFVUVEEAESFwoTVEFTS19TVEFUVVNfUlVOTklORxACEhcKE1RBU0tfU1RBVFVTX1dBSVRJTkcQAxIWChJUQVNLX1NUQVRVU19QQVJLRUQQBBIWChJUQVNLX1NUQVRVU19QQVVTRUQQBRIWChJUQVNLX1NUQVRVU19GQUlMRUQQBhIZChVUQVNLX1NUQVRVU19TVUNDRUVERUQQByp5CgpQcm9tcHRLaW5kEhsKF1BST01QVF9LSU5EX1VOU1BFQ0lGSUVEEAASGgoWUFJPTVBUX0tJTkRfUEVSTUlTU0lPThABEhgKFFBST01QVF9LSU5EX1FVRVNUSU9OEAISGAoUUFJPTVBUX0tJTkRfQVBQUk9WQUwQA0JFWkNnaXRodWIuY29tL3NxdWFzaC1ib3gvZmxvYXRpbGxhL3NyYy9nZW4vZ28vZmxvYXRpbGxhL3YxO2Zsb2F0aWxsYXYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChdmbG9hdGlsbGEvdjEvdGFzay5wcm90bxIMZmxvYXRpbGxhLnYxIloKBlByb21wdBIKCgJpZBgBIAEoCRImCgRraW5kGAIgASgOMhguZmxvYXRpbGxhLnYxLlByb21wdEtpbmQSDAoEdGV4dBgDIAEoCRIOCgZkZXRhaWwYBCABKAkifQoFVXNhZ2USFAoMaW5wdXRfdG9rZW5zGAEgASgDEhUKDW91dHB1dF90b2tlbnMYAiABKAMSGQoRY2FjaGVfcmVhZF90b2tlbnMYAyABKAMSGgoSY2FjaGVfd3JpdGVfdG9rZW5zGAQgASgDEhAKCGNvc3RfdXNkGAUgASgBIpwBCgtTdGFnZVJlY29yZBINCgVpbmRleBgBIAEoBRIMCgRuYW1lGAIgASgJEi4KCnN0YXJ0ZWRfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KC2ZpbmlzaGVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIPCgdzdW1tYXJ5GAUgASgJIngKC0FydGVmYWN0UmVmEgwKBGtpbmQYASABKAkSDQoFdGl0bGUYAiABKAkSDwoHc3VtbWFyeRgDIAEoCRILCgN1cmkYBCABKAkSLgoKdXBkYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiZwoFU3RvcnkSCwoDa2V5GAEgASgJEg0KBXRpdGxlGAIgASgJEhMKC2Rlc2NyaXB0aW9uGAMgASgJEhsKE2FjY2VwdGFuY2VfY3JpdGVyaWEYBCADKAkSEAoIcHJpb3JpdHkYBSABKAkipAcKBFRhc2sSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIUCgxwcm9jZXNzX3R5cGUYAyABKAkSEAoId29ya2Zsb3cYBCABKAkSDQoFdGl0bGUYBSABKAkSFAoMaW5zdHJ1Y3Rpb25zGAYgASgJEi4KBmlucHV0cxgHIAMoCzIeLmZsb2F0aWxsYS52MS5UYXNrLklucHV0c0VudHJ5EhEKCXBhcmVudF9pZBgIIAEoCRIoCgZzdGF0dXMYCSABKA4yGC5mbG9hdGlsbGEudjEuVGFza1N0YXR1cxITCgtzdGFnZV9pbmRleBgKIAEoBRIbCg5zdGFnZV9wcm9ncmVzcxgLIAEoAkgAiAEBEikKBnN0YWdlcxgMIAMoCzIZLmZsb2F0aWxsYS52MS5TdGFnZVJlY29yZBIQCghhY3Rpdml0eRgNIAEoCRIMCgR0YWlsGA4gAygJEiQKBnByb21wdBgPIAEoCzIULmZsb2F0aWxsYS52MS5Qcm9tcHQSDwoHcGFya19vbhgQIAEoCRIiCgV1c2FnZRgRIAEoCzITLmZsb2F0aWxsYS52MS5Vc2FnZRIPCgdydW5fc2VxGBIgASgNEg8KB2F0dGVtcHQYEyABKA0SNAoQbGVhc2VfZXhwaXJlc19hdBgUIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDQoFZXJyb3IYFSABKAkSDgoGYnJhbmNoGBYgASgJEhQKDGNvbnRleHRfdXNlZBgXIAEoARIsCglhcnRlZmFjdHMYGCADKAsyGS5mbG9hdGlsbGEudjEuQXJ0ZWZhY3RSZWYSLgoKY3JlYXRlZF9hdBgZIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKc3RhcnRlZF9hdBgaIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoLZmluaXNoZWRfYXQYGyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYHCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiQKB3N0b3JpZXMYHSADKAsyEy5mbG9hdGlsbGEudjEuU3RvcnkSDAoEc3BlYxgeIAEoCRotCgtJbnB1dHNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBQhEKD19zdGFnZV9wcm9ncmVzcyrWAQoKVGFza1N0YXR1cxIbChdUQVNLX1NUQVRVU19VTlNQRUNJRklFRBAAEhYKElRBU0tfU1RBVFVTX1FVRVVFRBABEhcKE1RBU0tfU1RBVFVTX1JVTk5JTkcQAhIXChNUQVNLX1NUQVRVU19XQUlUSU5HEAMSFgoSVEFTS19TVEFUVVNfUEFSS0VEEAQSFgoSVEFTS19TVEFUVVNfUEFVU0VEEAUSFgoSVEFTS19TVEFUVVNfRkFJTEVEEAYSGQoVVEFTS19TVEFUVVNfU1VDQ0VFREVEEAcqeQoKUHJvbXB0S2luZBIbChdQUk9NUFRfS0lORF9VTlNQRUNJRklFRBAAEhoKFlBST01QVF9LSU5EX1BFUk1JU1NJT04QARIYChRQUk9NUFRfS0lORF9RVUVTVElPThACEhgKFFBST01QVF9LSU5EX0FQUFJPVkFMEANCRVpDZ2l0aHViLmNvbS9zcXVhc2gtYm94L2Zsb2F0aWxsYS9zcmMvZ2VuL2dvL2Zsb2F0aWxsYS92MTtmbG9hdGlsbGF2MWIGcHJvdG8z", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message floatilla.v1.Prompt
@@ -173,6 +173,51 @@ export const ArtefactRefSchema: GenMessage<ArtefactRef> = /*@__PURE__*/
   messageDesc(file_floatilla_v1_task, 3);
 
 /**
+ * Story is a unit of implementation work a planning agent proposes. Approved
+ * stories are published to the story tracker, where a human moves them to
+ * implementation.
+ *
+ * @generated from message floatilla.v1.Story
+ */
+export type Story = Message<"floatilla.v1.Story"> & {
+  /**
+   * Stable key within the plan, e.g. "s1", used for idempotent publishing.
+   *
+   * @generated from field: string key = 1;
+   */
+  key: string;
+
+  /**
+   * @generated from field: string title = 2;
+   */
+  title: string;
+
+  /**
+   * @generated from field: string description = 3;
+   */
+  description: string;
+
+  /**
+   * @generated from field: repeated string acceptance_criteria = 4;
+   */
+  acceptanceCriteria: string[];
+
+  /**
+   * urgent | high | medium | low | none
+   *
+   * @generated from field: string priority = 5;
+   */
+  priority: string;
+};
+
+/**
+ * Describes the message floatilla.v1.Story.
+ * Use `create(StorySchema)` to create a new message.
+ */
+export const StorySchema: GenMessage<Story> = /*@__PURE__*/
+  messageDesc(file_floatilla_v1_task, 4);
+
+/**
  * Task is the long-lived unit the fleet UI calls an "agent". It outlives any
  * single run (container); runs are numbered by run_seq.
  *
@@ -330,6 +375,18 @@ export type Task = Message<"floatilla.v1.Task"> & {
    * @generated from field: google.protobuf.Timestamp updated_at = 28;
    */
   updatedAt?: Timestamp | undefined;
+
+  /**
+   * Planning output: proposed stories and the spec they came from.
+   *
+   * @generated from field: repeated floatilla.v1.Story stories = 29;
+   */
+  stories: Story[];
+
+  /**
+   * @generated from field: string spec = 30;
+   */
+  spec: string;
 };
 
 /**
@@ -337,7 +394,7 @@ export type Task = Message<"floatilla.v1.Task"> & {
  * Use `create(TaskSchema)` to create a new message.
  */
 export const TaskSchema: GenMessage<Task> = /*@__PURE__*/
-  messageDesc(file_floatilla_v1_task, 4);
+  messageDesc(file_floatilla_v1_task, 5);
 
 /**
  * TaskStatus is orthogonal to the stage a task is in.

@@ -68,6 +68,19 @@ message ArtefactRef {
   google.protobuf.Timestamp updated_at = 5;
 }
 
+// Story is a unit of implementation work a planning agent proposes. Approved
+// stories are published to the story tracker, where a human moves them to
+// implementation.
+message Story {
+  // Stable key within the plan, e.g. "s1", used for idempotent publishing.
+  string key = 1;
+  string title = 2;
+  string description = 3;
+  repeated string acceptance_criteria = 4;
+  // urgent | high | medium | low | none
+  string priority = 5;
+}
+
 // Task is the long-lived unit the fleet UI calls an "agent". It outlives any
 // single run (container); runs are numbered by run_seq.
 message Task {
@@ -110,4 +123,8 @@ message Task {
   google.protobuf.Timestamp started_at = 26;
   google.protobuf.Timestamp finished_at = 27;
   google.protobuf.Timestamp updated_at = 28;
+
+  // Planning output: proposed stories and the spec they came from.
+  repeated Story stories = 29;
+  string spec = 30;
 }

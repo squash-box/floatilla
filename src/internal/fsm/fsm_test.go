@@ -253,3 +253,20 @@ func TestApplyDoesNotMutateInput(t *testing.T) {
 		t.Fatal("Apply mutated its input")
 	}
 }
+
+func TestStoriesPublishedReplacesStories(t *testing.T) {
+	h, _ := newHarness(t)
+	h.ev(started())
+	pub := func(keys ...string) {
+		var stories []*v1.Story
+		for _, k := range keys {
+			stories = append(stories, &v1.Story{Key: k, Title: "story " + k})
+		}
+		h.ev(&v1.AgentEvent{Body: &v1.AgentEvent_StoriesPublished{StoriesPublished: &v1.StoriesPublished{Stories: stories, Spec: "# spec " + keys[0]}}})
+	}
+	pub("s1", "s2")
+	pub("s1", "s2", "s3") // a revised plan replaces the earlier stories
+	if len(h.task.Stories) != 3 || h.task.Spec != "# spec s1" {
+		t.Fatalf("stories = %v, spec = %q", h.task.Stories, h.task.Spec)
+	}
+}

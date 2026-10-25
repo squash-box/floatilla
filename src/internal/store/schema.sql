@@ -21,3 +21,25 @@ create table if not exists outbox (
   core       boolean     not null default false,
   created_at timestamptz not null default now()
 );
+
+-- Story tracker sync (internal/tracker): one row per tracker item floatilla
+-- knows about, and the plans whose stories were published.
+create table if not exists tracker_links (
+  item_id      text        primary key,
+  item_key     text        not null default '',
+  url          text        not null default '',
+  task_id      text        not null default '',
+  plan_task_id text        not null default '',
+  story_key    text        not null default '',
+  synced_state text        not null default '',
+  since        timestamptz not null default now(),
+  accepted     boolean     not null default false,
+  pr_linked    boolean     not null default false,
+  dispatches   integer     not null default 0,
+  settled      boolean     not null default false
+);
+
+create table if not exists tracker_plans (
+  plan_task_id text        primary key,
+  published_at timestamptz not null default now()
+);

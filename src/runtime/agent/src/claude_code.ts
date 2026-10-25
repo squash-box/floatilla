@@ -22,6 +22,7 @@ import { PromptKind } from "./gen/floatilla/v1/task_pb.js";
 import type { StageEngine, StageRequest } from "./engine.js";
 import { CONTROL_TOOLS, StageError } from "./loop.js";
 import { StoppedError, type Host } from "./protocol.js";
+import { publishStories } from "./stories.js";
 import { confine } from "./tools.js";
 
 const MCP_SERVER = "floatilla";
@@ -108,7 +109,7 @@ interface StageState {
 }
 
 /** The control tools, as MCP tools on an in-process server. */
-export function controlTools(host: Host, state: StageState) {
+export function controlTools(host: Host, state: StageState, workspace: string) {
   const log = (kind: string, msg: string, tone = LogTone.UNSPECIFIED) => host.send({ case: "log", value: { kind, text: msg, tone } });
   return [
     tool("complete_stage", CONTROL_TOOLS.complete_stage.description, CONTROL_TOOLS.complete_stage.schema.shape, async ({ summary }) => {
@@ -123,6 +124,13 @@ export function controlTools(host: Host, state: StageState) {
       host.send({ case: "artefact", value: { kind: a.kind, title: a.title, summary: a.summary, uri: a.uri ?? "" } });
       log("write", `artefact ${a.kind}: ${a.summary}`, LogTone.MUTED);
       return text("published");
+    }),
+    tool("publish_stories", CONTROL_TOOLS.publish_stories.description, CONTROL_TOOLS.publish_stories.schema.shape, async (input) => {
+      try {
+        return text(await publishStories(host, workspace, input));
+      } catch (err) {
+        return { ...text(`publish_stories failed: ${err instanceof Error ? err.message : String(err)}`), isError: true };
+      }
     }),
     tool("ask_human", CONTROL_TOOLS.ask_human.description, CONTROL_TOOLS.ask_human.schema.shape, async ({ question, kind, detail }) => {
       log("ask", question);
@@ -189,7 +197,7 @@ export class ClaudeCodeEngine implements StageEngine {
     const state: StageState = {};
     const server = createSdkMcpServer({
       name: MCP_SERVER,
-      tools: controlTools(host, state),
+      tools: controlTools(host, state, req.workspace),
       // ask_human can wait for a human for a long time.
       timeout: 24 * 60 * 60 * 1000,
     });
@@ -210,7 +218,7 @@ export class ClaudeCodeEngine implements StageEngine {
       systemPrompt: {
         type: "preset",
         preset: "claude_code",
-        append: `${req.system}\n\nThe harness tools are the ${MCP_SERVER} MCP tools: complete_stage, report_progress, publish_artefact and ask_human. Use ask_human rather than AskUserQuestion.`,
+        append: `${req.system}\n\nThe harness tools are the ${MCP_SERVER} MCP tools: complete_stage, report_progress, publish_artefact, publish_stories and ask_human. Use ask_human rather than AskUserQuestion.`,
       },
       tools: builtins,
       allowedTools: controlNames,

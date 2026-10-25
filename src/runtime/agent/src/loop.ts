@@ -7,6 +7,7 @@ import { PromptKind } from "./gen/floatilla/v1/task_pb.js";
 import { LogTone } from "./gen/floatilla/v1/run_pb.js";
 import { echoContent, type ContentBlock, type MessageParam, type ModelProvider, type Tool } from "./model.js";
 import { StoppedError, type Host } from "./protocol.js";
+import { PUBLISH_STORIES_DESCRIPTION, publishStories, publishStoriesSchema } from "./stories.js";
 import { ToolError, toolByName, type ToolContext, type ToolDef } from "./tools.js";
 import type Anthropic from "@anthropic-ai/sdk";
 
@@ -56,6 +57,10 @@ export const CONTROL_TOOLS = {
       summary: z.string().describe("One line, e.g. '✓41 ✗2' or 'PR #142 open'"),
       uri: z.string().optional().describe("Workspace path or URL of the full artefact"),
     }),
+  },
+  publish_stories: {
+    description: PUBLISH_STORIES_DESCRIPTION,
+    schema: publishStoriesSchema,
   },
 } as const;
 
@@ -196,6 +201,12 @@ async function runTool(
         });
         ctx.log("write", `artefact ${String(input.kind)}: ${String(input.summary)}`, LogTone.MUTED);
         return ok("published");
+      case "publish_stories":
+        try {
+          return ok(await publishStories(host, run.workspace, parsed.data as z.infer<typeof publishStoriesSchema>));
+        } catch (err) {
+          return { result: errorResult(call.id, `publish_stories failed: ${err instanceof Error ? err.message : String(err)}`) };
+        }
       case "ask_human": {
         const approval = input.kind === "approval";
         ctx.log("ask", String(input.question));

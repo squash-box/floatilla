@@ -6,7 +6,7 @@ import type { GenEnum, GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2"
 import { enumDesc, fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
 import type { ProcessTypeSpec } from "./pack_pb.js";
 import { file_floatilla_v1_pack } from "./pack_pb.js";
-import type { ArtefactRef, Prompt, Task, Usage } from "./task_pb.js";
+import type { ArtefactRef, Prompt, Story, Task, Usage } from "./task_pb.js";
 import { file_floatilla_v1_task } from "./task_pb.js";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
@@ -16,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file floatilla/v1/run.proto.
  */
 export const file_floatilla_v1_run: GenFile = /*@__PURE__*/
-  fileDesc("ChZmbG9hdGlsbGEvdjEvcnVuLnByb3RvEgxmbG9hdGlsbGEudjEiQQoMUHJvbXB0QW5zd2VyEhEKCXByb21wdF9pZBgBIAEoCRIQCghhcHByb3ZlZBgCIAEoCBIMCgR0ZXh0GAMgASgJIjIKDUV4dGVybmFsRXZlbnQSCwoDa2V5GAEgASgJEhQKDHBheWxvYWRfanNvbhgCIAEoCSJsCgZSZXN1bWUSLAoGYW5zd2VyGAEgASgLMhouZmxvYXRpbGxhLnYxLlByb21wdEFuc3dlckgAEiwKBWV2ZW50GAIgASgLMhsuZmxvYXRpbGxhLnYxLkV4dGVybmFsRXZlbnRIAEIGCgRraW5kIqsBCgpSdW5SZXF1ZXN0Eg8KB3Rhc2tfaWQYASABKAkSDwoHcnVuX3NlcRgCIAEoDRIgCgR0YXNrGAMgASgLMhIuZmxvYXRpbGxhLnYxLlRhc2sSJAoGcmVzdW1lGAQgASgLMhQuZmxvYXRpbGxhLnYxLlJlc3VtZRIzCgxwcm9jZXNzX3R5cGUYBSABKAsyHS5mbG9hdGlsbGEudjEuUHJvY2Vzc1R5cGVTcGVjIiAKClJ1blN0YXJ0ZWQSEgoKc2FuZGJveF9pZBgBIAEoCSILCglIZWFydGJlYXQiKwoMU3RhZ2VTdGFydGVkEg0KBWluZGV4GAEgASgFEgwKBG5hbWUYAiABKAkiLwoNU3RhZ2VGaW5pc2hlZBINCgVpbmRleBgBIAEoBRIPCgdzdW1tYXJ5GAIgASgJInAKCFByb2dyZXNzEhAKCGFjdGl2aXR5GAEgASgJEhsKDnN0YWdlX3Byb2dyZXNzGAIgASgCSACIAQESFAoMY29udGV4dF91c2VkGAMgASgBEgwKBHRhaWwYBCADKAlCEQoPX3N0YWdlX3Byb2dyZXNzIkoKB0xvZ0xpbmUSDAoEa2luZBgBIAEoCRIMCgR0ZXh0GAIgASgJEiMKBHRvbmUYAyABKA4yFS5mbG9hdGlsbGEudjEuTG9nVG9uZSI0CgxQcm9tcHRSYWlzZWQSJAoGcHJvbXB0GAEgASgLMhQuZmxvYXRpbGxhLnYxLlByb21wdCIjCg5Qcm9tcHRSZXNvbHZlZBIRCglwcm9tcHRfaWQYASABKAkiPwoKVXNhZ2VEZWx0YRINCgVtb2RlbBgBIAEoCRIiCgV1c2FnZRgCIAEoCzITLmZsb2F0aWxsYS52MS5Vc2FnZSJVCgtSdW5GaW5pc2hlZBImCgdvdXRjb21lGAEgASgOMhUuZmxvYXRpbGxhLnYxLk91dGNvbWUSDQoFZXJyb3IYAiABKAkSDwoHcGFya19vbhgDIAEoCSKDBQoKQWdlbnRFdmVudBIPCgd0YXNrX2lkGAEgASgJEg8KB3J1bl9zZXEYAiABKA0SCwoDc2VxGAMgASgEEiYKAmF0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIvCgtydW5fc3RhcnRlZBgKIAEoCzIYLmZsb2F0aWxsYS52MS5SdW5TdGFydGVkSAASLAoJaGVhcnRiZWF0GAsgASgLMhcuZmxvYXRpbGxhLnYxLkhlYXJ0YmVhdEgAEjMKDXN0YWdlX3N0YXJ0ZWQYDCABKAsyGi5mbG9hdGlsbGEudjEuU3RhZ2VTdGFydGVkSAASNQoOc3RhZ2VfZmluaXNoZWQYDSABKAsyGy5mbG9hdGlsbGEudjEuU3RhZ2VGaW5pc2hlZEgAEioKCHByb2dyZXNzGA4gASgLMhYuZmxvYXRpbGxhLnYxLlByb2dyZXNzSAASJAoDbG9nGA8gASgLMhUuZmxvYXRpbGxhLnYxLkxvZ0xpbmVIABItCghhcnRlZmFjdBgQIAEoCzIZLmZsb2F0aWxsYS52MS5BcnRlZmFjdFJlZkgAEjMKDXByb21wdF9yYWlzZWQYESABKAsyGi5mbG9hdGlsbGEudjEuUHJvbXB0UmFpc2VkSAASNwoPcHJvbXB0X3Jlc29sdmVkGBIgASgLMhwuZmxvYXRpbGxhLnYxLlByb21wdFJlc29sdmVkSAASKQoFdXNhZ2UYEyABKAsyGC5mbG9hdGlsbGEudjEuVXNhZ2VEZWx0YUgAEjEKDHJ1bl9maW5pc2hlZBgUIAEoCzIZLmZsb2F0aWxsYS52MS5SdW5GaW5pc2hlZEgAQgYKBGJvZHkiGQoHU3RvcFJ1bhIOCgZyZWFzb24YASABKAkiiAEKB0NvbW1hbmQSDwoHdGFza19pZBgBIAEoCRIPCgdydW5fc2VxGAIgASgNEiwKBmFuc3dlchgKIAEoCzIaLmZsb2F0aWxsYS52MS5Qcm9tcHRBbnN3ZXJIABIlCgRzdG9wGAsgASgLMhUuZmxvYXRpbGxhLnYxLlN0b3BSdW5IAEIGCgRib2R5KnYKB091dGNvbWUSFwoTT1VUQ09NRV9VTlNQRUNJRklFRBAAEhUKEU9VVENPTUVfU1VDQ0VFREVEEAESEgoOT1VUQ09NRV9GQUlMRUQQAhISCg5PVVRDT01FX1BBUktFRBADEhMKD09VVENPTUVfU1RPUFBFRBAEKmIKB0xvZ1RvbmUSGAoUTE9HX1RPTkVfVU5TUEVDSUZJRUQQABISCg5MT0dfVE9ORV9NVVRFRBABEhQKEExPR19UT05FX1NVQ0NFU1MQAhITCg9MT0dfVE9ORV9GQUlMRUQQA0JFWkNnaXRodWIuY29tL3NxdWFzaC1ib3gvZmxvYXRpbGxhL3NyYy9nZW4vZ28vZmxvYXRpbGxhL3YxO2Zsb2F0aWxsYXYxYgZwcm90bzM", [file_floatilla_v1_pack, file_floatilla_v1_task, file_google_protobuf_timestamp]);
+  fileDesc("ChZmbG9hdGlsbGEvdjEvcnVuLnByb3RvEgxmbG9hdGlsbGEudjEiQQoMUHJvbXB0QW5zd2VyEhEKCXByb21wdF9pZBgBIAEoCRIQCghhcHByb3ZlZBgCIAEoCBIMCgR0ZXh0GAMgASgJIjIKDUV4dGVybmFsRXZlbnQSCwoDa2V5GAEgASgJEhQKDHBheWxvYWRfanNvbhgCIAEoCSJsCgZSZXN1bWUSLAoGYW5zd2VyGAEgASgLMhouZmxvYXRpbGxhLnYxLlByb21wdEFuc3dlckgAEiwKBWV2ZW50GAIgASgLMhsuZmxvYXRpbGxhLnYxLkV4dGVybmFsRXZlbnRIAEIGCgRraW5kIqsBCgpSdW5SZXF1ZXN0Eg8KB3Rhc2tfaWQYASABKAkSDwoHcnVuX3NlcRgCIAEoDRIgCgR0YXNrGAMgASgLMhIuZmxvYXRpbGxhLnYxLlRhc2sSJAoGcmVzdW1lGAQgASgLMhQuZmxvYXRpbGxhLnYxLlJlc3VtZRIzCgxwcm9jZXNzX3R5cGUYBSABKAsyHS5mbG9hdGlsbGEudjEuUHJvY2Vzc1R5cGVTcGVjIiAKClJ1blN0YXJ0ZWQSEgoKc2FuZGJveF9pZBgBIAEoCSILCglIZWFydGJlYXQiKwoMU3RhZ2VTdGFydGVkEg0KBWluZGV4GAEgASgFEgwKBG5hbWUYAiABKAkiLwoNU3RhZ2VGaW5pc2hlZBINCgVpbmRleBgBIAEoBRIPCgdzdW1tYXJ5GAIgASgJInAKCFByb2dyZXNzEhAKCGFjdGl2aXR5GAEgASgJEhsKDnN0YWdlX3Byb2dyZXNzGAIgASgCSACIAQESFAoMY29udGV4dF91c2VkGAMgASgBEgwKBHRhaWwYBCADKAlCEQoPX3N0YWdlX3Byb2dyZXNzIkoKB0xvZ0xpbmUSDAoEa2luZBgBIAEoCRIMCgR0ZXh0GAIgASgJEiMKBHRvbmUYAyABKA4yFS5mbG9hdGlsbGEudjEuTG9nVG9uZSI0CgxQcm9tcHRSYWlzZWQSJAoGcHJvbXB0GAEgASgLMhQuZmxvYXRpbGxhLnYxLlByb21wdCIjCg5Qcm9tcHRSZXNvbHZlZBIRCglwcm9tcHRfaWQYASABKAkiPwoKVXNhZ2VEZWx0YRINCgVtb2RlbBgBIAEoCRIiCgV1c2FnZRgCIAEoCzITLmZsb2F0aWxsYS52MS5Vc2FnZSJGChBTdG9yaWVzUHVibGlzaGVkEiQKB3N0b3JpZXMYASADKAsyEy5mbG9hdGlsbGEudjEuU3RvcnkSDAoEc3BlYxgCIAEoCSJVCgtSdW5GaW5pc2hlZBImCgdvdXRjb21lGAEgASgOMhUuZmxvYXRpbGxhLnYxLk91dGNvbWUSDQoFZXJyb3IYAiABKAkSDwoHcGFya19vbhgDIAEoCSLABQoKQWdlbnRFdmVudBIPCgd0YXNrX2lkGAEgASgJEg8KB3J1bl9zZXEYAiABKA0SCwoDc2VxGAMgASgEEiYKAmF0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIvCgtydW5fc3RhcnRlZBgKIAEoCzIYLmZsb2F0aWxsYS52MS5SdW5TdGFydGVkSAASLAoJaGVhcnRiZWF0GAsgASgLMhcuZmxvYXRpbGxhLnYxLkhlYXJ0YmVhdEgAEjMKDXN0YWdlX3N0YXJ0ZWQYDCABKAsyGi5mbG9hdGlsbGEudjEuU3RhZ2VTdGFydGVkSAASNQoOc3RhZ2VfZmluaXNoZWQYDSABKAsyGy5mbG9hdGlsbGEudjEuU3RhZ2VGaW5pc2hlZEgAEioKCHByb2dyZXNzGA4gASgLMhYuZmxvYXRpbGxhLnYxLlByb2dyZXNzSAASJAoDbG9nGA8gASgLMhUuZmxvYXRpbGxhLnYxLkxvZ0xpbmVIABItCghhcnRlZmFjdBgQIAEoCzIZLmZsb2F0aWxsYS52MS5BcnRlZmFjdFJlZkgAEjMKDXByb21wdF9yYWlzZWQYESABKAsyGi5mbG9hdGlsbGEudjEuUHJvbXB0UmFpc2VkSAASNwoPcHJvbXB0X3Jlc29sdmVkGBIgASgLMhwuZmxvYXRpbGxhLnYxLlByb21wdFJlc29sdmVkSAASKQoFdXNhZ2UYEyABKAsyGC5mbG9hdGlsbGEudjEuVXNhZ2VEZWx0YUgAEjEKDHJ1bl9maW5pc2hlZBgUIAEoCzIZLmZsb2F0aWxsYS52MS5SdW5GaW5pc2hlZEgAEjsKEXN0b3JpZXNfcHVibGlzaGVkGBUgASgLMh4uZmxvYXRpbGxhLnYxLlN0b3JpZXNQdWJsaXNoZWRIAEIGCgRib2R5IhkKB1N0b3BSdW4SDgoGcmVhc29uGAEgASgJIogBCgdDb21tYW5kEg8KB3Rhc2tfaWQYASABKAkSDwoHcnVuX3NlcRgCIAEoDRIsCgZhbnN3ZXIYCiABKAsyGi5mbG9hdGlsbGEudjEuUHJvbXB0QW5zd2VySAASJQoEc3RvcBgLIAEoCzIVLmZsb2F0aWxsYS52MS5TdG9wUnVuSABCBgoEYm9keSp2CgdPdXRjb21lEhcKE09VVENPTUVfVU5TUEVDSUZJRUQQABIVChFPVVRDT01FX1NVQ0NFRURFRBABEhIKDk9VVENPTUVfRkFJTEVEEAISEgoOT1VUQ09NRV9QQVJLRUQQAxITCg9PVVRDT01FX1NUT1BQRUQQBCpiCgdMb2dUb25lEhgKFExPR19UT05FX1VOU1BFQ0lGSUVEEAASEgoOTE9HX1RPTkVfTVVURUQQARIUChBMT0dfVE9ORV9TVUNDRVNTEAISEwoPTE9HX1RPTkVfRkFJTEVEEANCRVpDZ2l0aHViLmNvbS9zcXVhc2gtYm94L2Zsb2F0aWxsYS9zcmMvZ2VuL2dvL2Zsb2F0aWxsYS92MTtmbG9hdGlsbGF2MWIGcHJvdG8z", [file_floatilla_v1_pack, file_floatilla_v1_task, file_google_protobuf_timestamp]);
 
 /**
  * @generated from message floatilla.v1.PromptAnswer
@@ -336,6 +336,30 @@ export const UsageDeltaSchema: GenMessage<UsageDelta> = /*@__PURE__*/
   messageDesc(file_floatilla_v1_run, 12);
 
 /**
+ * StoriesPublished replaces the task's proposed stories and spec.
+ *
+ * @generated from message floatilla.v1.StoriesPublished
+ */
+export type StoriesPublished = Message<"floatilla.v1.StoriesPublished"> & {
+  /**
+   * @generated from field: repeated floatilla.v1.Story stories = 1;
+   */
+  stories: Story[];
+
+  /**
+   * @generated from field: string spec = 2;
+   */
+  spec: string;
+};
+
+/**
+ * Describes the message floatilla.v1.StoriesPublished.
+ * Use `create(StoriesPublishedSchema)` to create a new message.
+ */
+export const StoriesPublishedSchema: GenMessage<StoriesPublished> = /*@__PURE__*/
+  messageDesc(file_floatilla_v1_run, 13);
+
+/**
  * @generated from message floatilla.v1.RunFinished
  */
 export type RunFinished = Message<"floatilla.v1.RunFinished"> & {
@@ -362,7 +386,7 @@ export type RunFinished = Message<"floatilla.v1.RunFinished"> & {
  * Use `create(RunFinishedSchema)` to create a new message.
  */
 export const RunFinishedSchema: GenMessage<RunFinished> = /*@__PURE__*/
-  messageDesc(file_floatilla_v1_run, 13);
+  messageDesc(file_floatilla_v1_run, 14);
 
 /**
  * AgentEvent is published by supervisors (and launchers, for crashed
@@ -462,6 +486,12 @@ export type AgentEvent = Message<"floatilla.v1.AgentEvent"> & {
      */
     value: RunFinished;
     case: "runFinished";
+  } | {
+    /**
+     * @generated from field: floatilla.v1.StoriesPublished stories_published = 21;
+     */
+    value: StoriesPublished;
+    case: "storiesPublished";
   } | { case: undefined; value?: undefined };
 };
 
@@ -470,7 +500,7 @@ export type AgentEvent = Message<"floatilla.v1.AgentEvent"> & {
  * Use `create(AgentEventSchema)` to create a new message.
  */
 export const AgentEventSchema: GenMessage<AgentEvent> = /*@__PURE__*/
-  messageDesc(file_floatilla_v1_run, 14);
+  messageDesc(file_floatilla_v1_run, 15);
 
 /**
  * @generated from message floatilla.v1.StopRun
@@ -487,7 +517,7 @@ export type StopRun = Message<"floatilla.v1.StopRun"> & {
  * Use `create(StopRunSchema)` to create a new message.
  */
 export const StopRunSchema: GenMessage<StopRun> = /*@__PURE__*/
-  messageDesc(file_floatilla_v1_run, 15);
+  messageDesc(file_floatilla_v1_run, 16);
 
 /**
  * Command is published by the control plane on cmd.<task_id> for the live run.
@@ -528,7 +558,7 @@ export type Command = Message<"floatilla.v1.Command"> & {
  * Use `create(CommandSchema)` to create a new message.
  */
 export const CommandSchema: GenMessage<Command> = /*@__PURE__*/
-  messageDesc(file_floatilla_v1_run, 16);
+  messageDesc(file_floatilla_v1_run, 17);
 
 /**
  * @generated from enum floatilla.v1.Outcome

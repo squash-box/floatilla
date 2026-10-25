@@ -1,5 +1,5 @@
 import { strict as assert } from "node:assert";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { after, before, describe, test } from "node:test";
@@ -163,12 +163,41 @@ describe("controlTools", () => {
   test("complete_stage records the summary; ask_human goes to the operator", async () => {
     const host = new FakeHost();
     const state: { summary?: string } = {};
-    const tools = Object.fromEntries(controlTools(host, state).map((t) => [t.name, t]));
+    const tools = Object.fromEntries(controlTools(host, state, "/tmp").map((t) => [t.name, t]));
     await tools.complete_stage!.handler({ summary: "all done" } as never, {});
     assert.equal(state.summary, "all done");
     const res = await tools.ask_human!.handler({ question: "which db?", kind: "question" } as never, {});
     assert.equal((res.content[0] as { text: string }).text, "re: which db?");
     await tools.publish_artefact!.handler({ kind: "tests", title: "tests", summary: "✓41 ✗0" } as never, {});
     assert.equal(host.of("artefact")[0]?.summary, "✓41 ✗0");
+  });
+});
+
+describe("publish_stories", () => {
+  test("sends the stories with the spec, and rejects duplicate keys and paths outside the workspace", async () => {
+    const ws = await mkdtemp(path.join(tmpdir(), "floatilla-cc-"));
+    try {
+      await mkdir(path.join(ws, "docs"));
+      await writeFile(path.join(ws, "docs/spec.md"), "# Spec\nRetry FX fetches.");
+      const host = new FakeHost();
+      const tools = Object.fromEntries(controlTools(host, {}, ws).map((t) => [t.name, t]));
+      const story = { key: "s1", title: "Add retry", description: "Wrap fetchRate.", acceptance_criteria: ["3 retries"] };
+
+      const res = await tools.publish_stories!.handler({ spec_path: "docs/spec.md", stories: [story, { ...story, key: "s2", priority: "high" }] } as never, {});
+      assert.ok(!res.isError, JSON.stringify(res));
+      const [sent] = host.of("storiesPublished");
+      assert.equal(sent?.spec, "# Spec\nRetry FX fetches.");
+      const stories = sent?.stories as { key: string; acceptanceCriteria: string[]; priority: string }[];
+      assert.deepEqual(stories.map((s) => [s.key, s.priority]), [["s1", "none"], ["s2", "high"]]);
+      assert.deepEqual(stories[0]!.acceptanceCriteria, ["3 retries"]);
+
+      const dup = await tools.publish_stories!.handler({ spec_path: "docs/spec.md", stories: [story, story] } as never, {});
+      assert.ok(dup.isError);
+      const escaped = await tools.publish_stories!.handler({ spec_path: "../../etc/passwd", stories: [story] } as never, {});
+      assert.ok(escaped.isError);
+      assert.equal(host.of("storiesPublished").length, 1);
+    } finally {
+      await rm(ws, { recursive: true, force: true });
+    }
   });
 });

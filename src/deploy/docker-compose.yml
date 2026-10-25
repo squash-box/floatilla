@@ -64,6 +64,15 @@ services:
     environment:
       DATABASE_URL: postgres://floatilla:floatilla@postgres:5432/floatilla
       NATS_URL: nats://nats:4222
+      # Story tracker (Plane). Unset PLANE_API_KEY disables the sync.
+      PLANE_API_KEY: ${PLANE_API_KEY:-}
+      PLANE_BASE_URL: ${PLANE_BASE_URL:-https://api.plane.so}
+      PLANE_APP_URL: ${PLANE_APP_URL:-}
+      PLANE_WORKSPACE: ${PLANE_WORKSPACE:-}
+      PLANE_PROJECT: ${PLANE_PROJECT:-}
+      FLOATILLA_TRACKER_PUBLISH_TO: ${FLOATILLA_TRACKER_PUBLISH_TO:-backlog}
+      FLOATILLA_TRACKER_INTERVAL: ${FLOATILLA_TRACKER_INTERVAL:-30s}
+      FLOATILLA_TRACKER_REPO: ${FLOATILLA_TRACKER_REPO:-}
     ports: ["${FLOATILLA_PORT:-7420}:8080"]
 
   launcher-plan:

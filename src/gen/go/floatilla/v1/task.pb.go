@@ -447,6 +447,87 @@ func (x *ArtefactRef) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// Story is a unit of implementation work a planning agent proposes. Approved
+// stories are published to the story tracker, where a human moves them to
+// implementation.
+type Story struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Stable key within the plan, e.g. "s1", used for idempotent publishing.
+	Key                string   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Title              string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description        string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	AcceptanceCriteria []string `protobuf:"bytes,4,rep,name=acceptance_criteria,json=acceptanceCriteria,proto3" json:"acceptance_criteria,omitempty"`
+	// urgent | high | medium | low | none
+	Priority      string `protobuf:"bytes,5,opt,name=priority,proto3" json:"priority,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Story) Reset() {
+	*x = Story{}
+	mi := &file_floatilla_v1_task_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Story) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Story) ProtoMessage() {}
+
+func (x *Story) ProtoReflect() protoreflect.Message {
+	mi := &file_floatilla_v1_task_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Story.ProtoReflect.Descriptor instead.
+func (*Story) Descriptor() ([]byte, []int) {
+	return file_floatilla_v1_task_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Story) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *Story) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *Story) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Story) GetAcceptanceCriteria() []string {
+	if x != nil {
+		return x.AcceptanceCriteria
+	}
+	return nil
+}
+
+func (x *Story) GetPriority() string {
+	if x != nil {
+		return x.Priority
+	}
+	return ""
+}
+
 // Task is the long-lived unit the fleet UI calls an "agent". It outlives any
 // single run (container); runs are numbered by run_seq.
 type Task struct {
@@ -479,19 +560,22 @@ type Task struct {
 	Error          string                 `protobuf:"bytes,21,opt,name=error,proto3" json:"error,omitempty"`
 	Branch         string                 `protobuf:"bytes,22,opt,name=branch,proto3" json:"branch,omitempty"`
 	// 0–1 share of the model context window in use.
-	ContextUsed   float64                `protobuf:"fixed64,23,opt,name=context_used,json=contextUsed,proto3" json:"context_used,omitempty"`
-	Artefacts     []*ArtefactRef         `protobuf:"bytes,24,rep,name=artefacts,proto3" json:"artefacts,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,25,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	StartedAt     *timestamppb.Timestamp `protobuf:"bytes,26,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
-	FinishedAt    *timestamppb.Timestamp `protobuf:"bytes,27,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,28,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	ContextUsed float64                `protobuf:"fixed64,23,opt,name=context_used,json=contextUsed,proto3" json:"context_used,omitempty"`
+	Artefacts   []*ArtefactRef         `protobuf:"bytes,24,rep,name=artefacts,proto3" json:"artefacts,omitempty"`
+	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,25,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	StartedAt   *timestamppb.Timestamp `protobuf:"bytes,26,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	FinishedAt  *timestamppb.Timestamp `protobuf:"bytes,27,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
+	UpdatedAt   *timestamppb.Timestamp `protobuf:"bytes,28,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// Planning output: proposed stories and the spec they came from.
+	Stories       []*Story `protobuf:"bytes,29,rep,name=stories,proto3" json:"stories,omitempty"`
+	Spec          string   `protobuf:"bytes,30,opt,name=spec,proto3" json:"spec,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Task) Reset() {
 	*x = Task{}
-	mi := &file_floatilla_v1_task_proto_msgTypes[4]
+	mi := &file_floatilla_v1_task_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -503,7 +587,7 @@ func (x *Task) String() string {
 func (*Task) ProtoMessage() {}
 
 func (x *Task) ProtoReflect() protoreflect.Message {
-	mi := &file_floatilla_v1_task_proto_msgTypes[4]
+	mi := &file_floatilla_v1_task_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -516,7 +600,7 @@ func (x *Task) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Task.ProtoReflect.Descriptor instead.
 func (*Task) Descriptor() ([]byte, []int) {
-	return file_floatilla_v1_task_proto_rawDescGZIP(), []int{4}
+	return file_floatilla_v1_task_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Task) GetId() string {
@@ -715,6 +799,20 @@ func (x *Task) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Task) GetStories() []*Story {
+	if x != nil {
+		return x.Stories
+	}
+	return nil
+}
+
+func (x *Task) GetSpec() string {
+	if x != nil {
+		return x.Spec
+	}
+	return ""
+}
+
 var File_floatilla_v1_task_proto protoreflect.FileDescriptor
 
 const file_floatilla_v1_task_proto_rawDesc = "" +
@@ -745,7 +843,13 @@ const file_floatilla_v1_task_proto_rawDesc = "" +
 	"\asummary\x18\x03 \x01(\tR\asummary\x12\x10\n" +
 	"\x03uri\x18\x04 \x01(\tR\x03uri\x129\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x8b\t\n" +
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x9e\x01\n" +
+	"\x05Story\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12/\n" +
+	"\x13acceptance_criteria\x18\x04 \x03(\tR\x12acceptanceCriteria\x12\x1a\n" +
+	"\bpriority\x18\x05 \x01(\tR\bpriority\"\xce\t\n" +
 	"\x04Task\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12!\n" +
@@ -780,7 +884,9 @@ const file_floatilla_v1_task_proto_rawDesc = "" +
 	"\vfinished_at\x18\x1b \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"finishedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x1c \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a9\n" +
+	"updated_at\x18\x1c \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12-\n" +
+	"\astories\x18\x1d \x03(\v2\x13.floatilla.v1.StoryR\astories\x12\x12\n" +
+	"\x04spec\x18\x1e \x01(\tR\x04spec\x1a9\n" +
 	"\vInputsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x11\n" +
@@ -815,7 +921,7 @@ func file_floatilla_v1_task_proto_rawDescGZIP() []byte {
 }
 
 var file_floatilla_v1_task_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_floatilla_v1_task_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_floatilla_v1_task_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_floatilla_v1_task_proto_goTypes = []any{
 	(TaskStatus)(0),               // 0: floatilla.v1.TaskStatus
 	(PromptKind)(0),               // 1: floatilla.v1.PromptKind
@@ -823,31 +929,33 @@ var file_floatilla_v1_task_proto_goTypes = []any{
 	(*Usage)(nil),                 // 3: floatilla.v1.Usage
 	(*StageRecord)(nil),           // 4: floatilla.v1.StageRecord
 	(*ArtefactRef)(nil),           // 5: floatilla.v1.ArtefactRef
-	(*Task)(nil),                  // 6: floatilla.v1.Task
-	nil,                           // 7: floatilla.v1.Task.InputsEntry
-	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
+	(*Story)(nil),                 // 6: floatilla.v1.Story
+	(*Task)(nil),                  // 7: floatilla.v1.Task
+	nil,                           // 8: floatilla.v1.Task.InputsEntry
+	(*timestamppb.Timestamp)(nil), // 9: google.protobuf.Timestamp
 }
 var file_floatilla_v1_task_proto_depIdxs = []int32{
 	1,  // 0: floatilla.v1.Prompt.kind:type_name -> floatilla.v1.PromptKind
-	8,  // 1: floatilla.v1.StageRecord.started_at:type_name -> google.protobuf.Timestamp
-	8,  // 2: floatilla.v1.StageRecord.finished_at:type_name -> google.protobuf.Timestamp
-	8,  // 3: floatilla.v1.ArtefactRef.updated_at:type_name -> google.protobuf.Timestamp
-	7,  // 4: floatilla.v1.Task.inputs:type_name -> floatilla.v1.Task.InputsEntry
+	9,  // 1: floatilla.v1.StageRecord.started_at:type_name -> google.protobuf.Timestamp
+	9,  // 2: floatilla.v1.StageRecord.finished_at:type_name -> google.protobuf.Timestamp
+	9,  // 3: floatilla.v1.ArtefactRef.updated_at:type_name -> google.protobuf.Timestamp
+	8,  // 4: floatilla.v1.Task.inputs:type_name -> floatilla.v1.Task.InputsEntry
 	0,  // 5: floatilla.v1.Task.status:type_name -> floatilla.v1.TaskStatus
 	4,  // 6: floatilla.v1.Task.stages:type_name -> floatilla.v1.StageRecord
 	2,  // 7: floatilla.v1.Task.prompt:type_name -> floatilla.v1.Prompt
 	3,  // 8: floatilla.v1.Task.usage:type_name -> floatilla.v1.Usage
-	8,  // 9: floatilla.v1.Task.lease_expires_at:type_name -> google.protobuf.Timestamp
+	9,  // 9: floatilla.v1.Task.lease_expires_at:type_name -> google.protobuf.Timestamp
 	5,  // 10: floatilla.v1.Task.artefacts:type_name -> floatilla.v1.ArtefactRef
-	8,  // 11: floatilla.v1.Task.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 12: floatilla.v1.Task.started_at:type_name -> google.protobuf.Timestamp
-	8,  // 13: floatilla.v1.Task.finished_at:type_name -> google.protobuf.Timestamp
-	8,  // 14: floatilla.v1.Task.updated_at:type_name -> google.protobuf.Timestamp
-	15, // [15:15] is the sub-list for method output_type
-	15, // [15:15] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	9,  // 11: floatilla.v1.Task.created_at:type_name -> google.protobuf.Timestamp
+	9,  // 12: floatilla.v1.Task.started_at:type_name -> google.protobuf.Timestamp
+	9,  // 13: floatilla.v1.Task.finished_at:type_name -> google.protobuf.Timestamp
+	9,  // 14: floatilla.v1.Task.updated_at:type_name -> google.protobuf.Timestamp
+	6,  // 15: floatilla.v1.Task.stories:type_name -> floatilla.v1.Story
+	16, // [16:16] is the sub-list for method output_type
+	16, // [16:16] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_floatilla_v1_task_proto_init() }
@@ -855,14 +963,14 @@ func file_floatilla_v1_task_proto_init() {
 	if File_floatilla_v1_task_proto != nil {
 		return
 	}
-	file_floatilla_v1_task_proto_msgTypes[4].OneofWrappers = []any{}
+	file_floatilla_v1_task_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_floatilla_v1_task_proto_rawDesc), len(file_floatilla_v1_task_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

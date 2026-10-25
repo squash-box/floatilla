@@ -31,6 +31,7 @@ A container-driven agent harness. A control plane queues runs; per-type launcher
 | `runtime/agent` | The TypeScript agent loop (Anthropic Messages API, own tools), plus a scripted provider |
 | `packs/dev` | `plan`, `impl`, `deploy` process types |
 | `deploy/` | Dockerfile (`platform` and `sandbox` targets) and docker-compose |
+| `internal/tracker` | Story tracker sync and the Plane adapter |
 | `internal/tui` | The fleet manager TUI (Bubble Tea + a cell canvas), built from `fleet-handoff/` |
 | `fleet-handoff/` | The TUI design handoff: spec, tokens, mockups |
 
@@ -66,6 +67,31 @@ Each run picks an engine (`FLOATILLA_MODEL_PROVIDER`, or by default from the cre
 To run on your subscription, generate a token with `claude setup-token`, put it in `deploy/.env` (see `deploy/.env.example`), then `make up`. Every engine keeps the same harness behaviour: the pack's permission policy and prompts on the fleet board, stage tools, artefacts and parking. With Claude Code, read-only tools (Read, Glob, Grep) are approved by Claude Code itself; edits and Bash go through the policy. Subscription runs meter tokens at $0, and plan limits appear on the task when they're hit. Defaults: `claude-opus-5-5`, effort `high` (`FLOATILLA_MODEL`, `FLOATILLA_EFFORT`).
 
 The subscription engine is for your own use: Anthropic doesn't allow third-party products to offer claude.ai login, so anyone you share floatilla with should use an API key.
+
+## Story tracker (Plane)
+
+The board drives both kinds of agent. A **planning agent** starts when you move an item labelled `plan` to Ready for agent; the plan stage ends by publishing stories (`publish_stories`). Once you approve the plan, the control plane publishes the stories to [Plane](https://plane.so) as children of the plan item. Plans started from the CLI or TUI also publish, grouped into a module. Moving a story (or any unlabelled item) to Ready for agent starts an **implementation agent**. Set `PLANE_API_KEY`, `PLANE_WORKSPACE` and `PLANE_PROJECT` in `deploy/.env` to enable it. `PLANE_BASE_URL` points it at a self-hosted Plane.
+
+On first start floatilla adds the states it needs to the project, plus the labels `floatilla` and `plan`. It leaves your existing states and items alone.
+
+Tasks get the repo from `FLOATILLA_TRACKER_REPO`. To override it for one item, put a `repo: <url>` line in the item's description. Stories inherit their plan's repo.
+
+| State | Group | Who moves it there | Meaning |
+| --- | --- | --- | --- |
+| Backlog | backlog | floatilla, when a plan is approved | Proposed story. Each plan becomes a module |
+| Ready for agent | unstarted | you | Hand it to an agent. Any item works, not only published ones |
+| Agent working | started | floatilla | An impl task is on it (the comment names the task) |
+| Needs you | started | floatilla | The agent has a question, needs a permission, is paused, or failed (the comment says which) |
+| In review | started | floatilla | A plan awaiting approval (spec and stories in the comment), or a PR, opened and linked, with the task parked on `pr.review` |
+| Done | completed | you or floatilla | You accept the review, or the task finished |
+| Cancelled | cancelled | you | Stops the agent |
+
+- **Approve or review**: from In review, move the item to Done to approve the plan or accept the PR. To ask for changes, comment and move it back to Ready for agent: the agent revises, with your comments as the feedback.
+- **Answer from the board**: for a question, reply in a comment, then move the item to Ready for agent. For a permission, moving the item to Ready for agent allows it; to deny, use the TUI.
+- **Retry**: a failed item sits in Needs you; moving it to Ready for agent starts a fresh task.
+- **Mechanics**: the sync polls every 30s (`FLOATILLA_TRACKER_INTERVAL`), well within Plane's 60 requests/minute. `FLOATILLA_TRACKER_PUBLISH_TO=ready` skips the backlog and dispatches stories as soon as a plan is approved. Published items carry `external_source=floatilla` and the label `floatilla`. Impl tasks get `tracker.item`, `tracker.key` and `tracker.url` inputs, the plan's inputs (e.g. `repo`), and the plan's spec in their instructions.
+
+The adapter sits behind `tracker.Tracker` (`internal/tracker`), so another tracker is one more file.
 
 ## Fleet manager TUI
 

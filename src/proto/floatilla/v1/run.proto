@@ -101,6 +101,12 @@ message UsageDelta {
   Usage usage = 2;
 }
 
+// StoriesPublished replaces the task's proposed stories and spec.
+message StoriesPublished {
+  repeated Story stories = 1;
+  string spec = 2;
+}
+
 message RunFinished {
   Outcome outcome = 1;
   string error = 2;
@@ -129,6 +135,7 @@ message AgentEvent {
     PromptResolved prompt_resolved = 18;
     UsageDelta usage = 19;
     RunFinished run_finished = 20;
+    StoriesPublished stories_published = 21;
   }
 }
 

@@ -251,3 +251,23 @@ func newID() string {
 	_, _ = rand.Read(b[:])
 	return fmt.Sprintf("%012x%s", time.Now().UnixMilli(), hex.EncodeToString(b[:]))
 }
+
+// Tasks, PostEvent, Answer and Stop (with Submit) let the tracker sync drive
+// the fleet.
+
+func (c *Control) Tasks(ctx context.Context) ([]*v1.Task, error) { return c.store.List(ctx, true) }
+
+func (c *Control) PostEvent(ctx context.Context, id string, ev *v1.ExternalEvent) error {
+	_, err := c.Apply(ctx, id, fsm.ExternalEvent{Event: ev})
+	return err
+}
+
+func (c *Control) Stop(ctx context.Context, id, reason string) error {
+	_, err := c.Apply(ctx, id, fsm.Stop{Reason: reason})
+	return err
+}
+
+func (c *Control) Answer(ctx context.Context, id string, a *v1.PromptAnswer) error {
+	_, err := c.Apply(ctx, id, fsm.AnswerPrompt{Answer: a})
+	return err
+}

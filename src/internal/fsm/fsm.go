@@ -194,6 +194,9 @@ func applyRunEvent(t *v1.Task, ev *v1.AgentEvent, now time.Time, cfg Config) ([]
 			t.Usage = &v1.Usage{}
 		}
 		addUsage(t.Usage, b.Usage.GetUsage())
+	case *v1.AgentEvent_StoriesPublished:
+		t.Stories = b.StoriesPublished.Stories
+		t.Spec = b.StoriesPublished.Spec
 	case *v1.AgentEvent_RunFinished:
 		finishRun(t, b.RunFinished, now)
 	case *v1.AgentEvent_Log:

@@ -268,6 +268,8 @@ func (s *Supervisor) handleAgent(ctx context.Context, m *v1.AgentMessage) error 
 		}
 		s.pending[p.Id] = ""
 		return s.publish(ctx, &v1.AgentEvent{Body: &v1.AgentEvent_PromptRaised{PromptRaised: &v1.PromptRaised{Prompt: p}}})
+	case *v1.AgentMessage_StoriesPublished:
+		return s.publish(ctx, &v1.AgentEvent{Body: &v1.AgentEvent_StoriesPublished{StoriesPublished: b.StoriesPublished}})
 	case *v1.AgentMessage_Finished:
 		s.finished = b.Finished
 	}

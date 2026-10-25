@@ -858,6 +858,59 @@ func (x *UsageDelta) GetUsage() *Usage {
 	return nil
 }
 
+// StoriesPublished replaces the task's proposed stories and spec.
+type StoriesPublished struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Stories       []*Story               `protobuf:"bytes,1,rep,name=stories,proto3" json:"stories,omitempty"`
+	Spec          string                 `protobuf:"bytes,2,opt,name=spec,proto3" json:"spec,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StoriesPublished) Reset() {
+	*x = StoriesPublished{}
+	mi := &file_floatilla_v1_run_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StoriesPublished) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StoriesPublished) ProtoMessage() {}
+
+func (x *StoriesPublished) ProtoReflect() protoreflect.Message {
+	mi := &file_floatilla_v1_run_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StoriesPublished.ProtoReflect.Descriptor instead.
+func (*StoriesPublished) Descriptor() ([]byte, []int) {
+	return file_floatilla_v1_run_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *StoriesPublished) GetStories() []*Story {
+	if x != nil {
+		return x.Stories
+	}
+	return nil
+}
+
+func (x *StoriesPublished) GetSpec() string {
+	if x != nil {
+		return x.Spec
+	}
+	return ""
+}
+
 type RunFinished struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
 	Outcome Outcome                `protobuf:"varint,1,opt,name=outcome,proto3,enum=floatilla.v1.Outcome" json:"outcome,omitempty"`
@@ -870,7 +923,7 @@ type RunFinished struct {
 
 func (x *RunFinished) Reset() {
 	*x = RunFinished{}
-	mi := &file_floatilla_v1_run_proto_msgTypes[13]
+	mi := &file_floatilla_v1_run_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -882,7 +935,7 @@ func (x *RunFinished) String() string {
 func (*RunFinished) ProtoMessage() {}
 
 func (x *RunFinished) ProtoReflect() protoreflect.Message {
-	mi := &file_floatilla_v1_run_proto_msgTypes[13]
+	mi := &file_floatilla_v1_run_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -895,7 +948,7 @@ func (x *RunFinished) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunFinished.ProtoReflect.Descriptor instead.
 func (*RunFinished) Descriptor() ([]byte, []int) {
-	return file_floatilla_v1_run_proto_rawDescGZIP(), []int{13}
+	return file_floatilla_v1_run_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *RunFinished) GetOutcome() Outcome {
@@ -941,6 +994,7 @@ type AgentEvent struct {
 	//	*AgentEvent_PromptResolved
 	//	*AgentEvent_Usage
 	//	*AgentEvent_RunFinished
+	//	*AgentEvent_StoriesPublished
 	Body          isAgentEvent_Body `protobuf_oneof:"body"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -948,7 +1002,7 @@ type AgentEvent struct {
 
 func (x *AgentEvent) Reset() {
 	*x = AgentEvent{}
-	mi := &file_floatilla_v1_run_proto_msgTypes[14]
+	mi := &file_floatilla_v1_run_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -960,7 +1014,7 @@ func (x *AgentEvent) String() string {
 func (*AgentEvent) ProtoMessage() {}
 
 func (x *AgentEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_floatilla_v1_run_proto_msgTypes[14]
+	mi := &file_floatilla_v1_run_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -973,7 +1027,7 @@ func (x *AgentEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentEvent.ProtoReflect.Descriptor instead.
 func (*AgentEvent) Descriptor() ([]byte, []int) {
-	return file_floatilla_v1_run_proto_rawDescGZIP(), []int{14}
+	return file_floatilla_v1_run_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *AgentEvent) GetTaskId() string {
@@ -1110,6 +1164,15 @@ func (x *AgentEvent) GetRunFinished() *RunFinished {
 	return nil
 }
 
+func (x *AgentEvent) GetStoriesPublished() *StoriesPublished {
+	if x != nil {
+		if x, ok := x.Body.(*AgentEvent_StoriesPublished); ok {
+			return x.StoriesPublished
+		}
+	}
+	return nil
+}
+
 type isAgentEvent_Body interface {
 	isAgentEvent_Body()
 }
@@ -1158,6 +1221,10 @@ type AgentEvent_RunFinished struct {
 	RunFinished *RunFinished `protobuf:"bytes,20,opt,name=run_finished,json=runFinished,proto3,oneof"`
 }
 
+type AgentEvent_StoriesPublished struct {
+	StoriesPublished *StoriesPublished `protobuf:"bytes,21,opt,name=stories_published,json=storiesPublished,proto3,oneof"`
+}
+
 func (*AgentEvent_RunStarted) isAgentEvent_Body() {}
 
 func (*AgentEvent_Heartbeat) isAgentEvent_Body() {}
@@ -1180,6 +1247,8 @@ func (*AgentEvent_Usage) isAgentEvent_Body() {}
 
 func (*AgentEvent_RunFinished) isAgentEvent_Body() {}
 
+func (*AgentEvent_StoriesPublished) isAgentEvent_Body() {}
+
 type StopRun struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Reason        string                 `protobuf:"bytes,1,opt,name=reason,proto3" json:"reason,omitempty"`
@@ -1189,7 +1258,7 @@ type StopRun struct {
 
 func (x *StopRun) Reset() {
 	*x = StopRun{}
-	mi := &file_floatilla_v1_run_proto_msgTypes[15]
+	mi := &file_floatilla_v1_run_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1201,7 +1270,7 @@ func (x *StopRun) String() string {
 func (*StopRun) ProtoMessage() {}
 
 func (x *StopRun) ProtoReflect() protoreflect.Message {
-	mi := &file_floatilla_v1_run_proto_msgTypes[15]
+	mi := &file_floatilla_v1_run_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1214,7 +1283,7 @@ func (x *StopRun) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopRun.ProtoReflect.Descriptor instead.
 func (*StopRun) Descriptor() ([]byte, []int) {
-	return file_floatilla_v1_run_proto_rawDescGZIP(), []int{15}
+	return file_floatilla_v1_run_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *StopRun) GetReason() string {
@@ -1240,7 +1309,7 @@ type Command struct {
 
 func (x *Command) Reset() {
 	*x = Command{}
-	mi := &file_floatilla_v1_run_proto_msgTypes[16]
+	mi := &file_floatilla_v1_run_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1252,7 +1321,7 @@ func (x *Command) String() string {
 func (*Command) ProtoMessage() {}
 
 func (x *Command) ProtoReflect() protoreflect.Message {
-	mi := &file_floatilla_v1_run_proto_msgTypes[16]
+	mi := &file_floatilla_v1_run_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1265,7 +1334,7 @@ func (x *Command) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Command.ProtoReflect.Descriptor instead.
 func (*Command) Descriptor() ([]byte, []int) {
-	return file_floatilla_v1_run_proto_rawDescGZIP(), []int{16}
+	return file_floatilla_v1_run_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *Command) GetTaskId() string {
@@ -1374,11 +1443,14 @@ const file_floatilla_v1_run_proto_rawDesc = "" +
 	"\n" +
 	"UsageDelta\x12\x14\n" +
 	"\x05model\x18\x01 \x01(\tR\x05model\x12)\n" +
-	"\x05usage\x18\x02 \x01(\v2\x13.floatilla.v1.UsageR\x05usage\"m\n" +
+	"\x05usage\x18\x02 \x01(\v2\x13.floatilla.v1.UsageR\x05usage\"U\n" +
+	"\x10StoriesPublished\x12-\n" +
+	"\astories\x18\x01 \x03(\v2\x13.floatilla.v1.StoryR\astories\x12\x12\n" +
+	"\x04spec\x18\x02 \x01(\tR\x04spec\"m\n" +
 	"\vRunFinished\x12/\n" +
 	"\aoutcome\x18\x01 \x01(\x0e2\x15.floatilla.v1.OutcomeR\aoutcome\x12\x14\n" +
 	"\x05error\x18\x02 \x01(\tR\x05error\x12\x17\n" +
-	"\apark_on\x18\x03 \x01(\tR\x06parkOn\"\x9b\x06\n" +
+	"\apark_on\x18\x03 \x01(\tR\x06parkOn\"\xea\x06\n" +
 	"\n" +
 	"AgentEvent\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\tR\x06taskId\x12\x17\n" +
@@ -1397,7 +1469,8 @@ const file_floatilla_v1_run_proto_rawDesc = "" +
 	"\rprompt_raised\x18\x11 \x01(\v2\x1a.floatilla.v1.PromptRaisedH\x00R\fpromptRaised\x12G\n" +
 	"\x0fprompt_resolved\x18\x12 \x01(\v2\x1c.floatilla.v1.PromptResolvedH\x00R\x0epromptResolved\x120\n" +
 	"\x05usage\x18\x13 \x01(\v2\x18.floatilla.v1.UsageDeltaH\x00R\x05usage\x12>\n" +
-	"\frun_finished\x18\x14 \x01(\v2\x19.floatilla.v1.RunFinishedH\x00R\vrunFinishedB\x06\n" +
+	"\frun_finished\x18\x14 \x01(\v2\x19.floatilla.v1.RunFinishedH\x00R\vrunFinished\x12M\n" +
+	"\x11stories_published\x18\x15 \x01(\v2\x1e.floatilla.v1.StoriesPublishedH\x00R\x10storiesPublishedB\x06\n" +
 	"\x04body\"!\n" +
 	"\aStopRun\x12\x16\n" +
 	"\x06reason\x18\x01 \x01(\tR\x06reason\"\xa6\x01\n" +
@@ -1433,7 +1506,7 @@ func file_floatilla_v1_run_proto_rawDescGZIP() []byte {
 }
 
 var file_floatilla_v1_run_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_floatilla_v1_run_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_floatilla_v1_run_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_floatilla_v1_run_proto_goTypes = []any{
 	(Outcome)(0),                  // 0: floatilla.v1.Outcome
 	(LogTone)(0),                  // 1: floatilla.v1.LogTone
@@ -1450,46 +1523,50 @@ var file_floatilla_v1_run_proto_goTypes = []any{
 	(*PromptRaised)(nil),          // 12: floatilla.v1.PromptRaised
 	(*PromptResolved)(nil),        // 13: floatilla.v1.PromptResolved
 	(*UsageDelta)(nil),            // 14: floatilla.v1.UsageDelta
-	(*RunFinished)(nil),           // 15: floatilla.v1.RunFinished
-	(*AgentEvent)(nil),            // 16: floatilla.v1.AgentEvent
-	(*StopRun)(nil),               // 17: floatilla.v1.StopRun
-	(*Command)(nil),               // 18: floatilla.v1.Command
-	(*Task)(nil),                  // 19: floatilla.v1.Task
-	(*ProcessTypeSpec)(nil),       // 20: floatilla.v1.ProcessTypeSpec
-	(*Prompt)(nil),                // 21: floatilla.v1.Prompt
-	(*Usage)(nil),                 // 22: floatilla.v1.Usage
-	(*timestamppb.Timestamp)(nil), // 23: google.protobuf.Timestamp
-	(*ArtefactRef)(nil),           // 24: floatilla.v1.ArtefactRef
+	(*StoriesPublished)(nil),      // 15: floatilla.v1.StoriesPublished
+	(*RunFinished)(nil),           // 16: floatilla.v1.RunFinished
+	(*AgentEvent)(nil),            // 17: floatilla.v1.AgentEvent
+	(*StopRun)(nil),               // 18: floatilla.v1.StopRun
+	(*Command)(nil),               // 19: floatilla.v1.Command
+	(*Task)(nil),                  // 20: floatilla.v1.Task
+	(*ProcessTypeSpec)(nil),       // 21: floatilla.v1.ProcessTypeSpec
+	(*Prompt)(nil),                // 22: floatilla.v1.Prompt
+	(*Usage)(nil),                 // 23: floatilla.v1.Usage
+	(*Story)(nil),                 // 24: floatilla.v1.Story
+	(*timestamppb.Timestamp)(nil), // 25: google.protobuf.Timestamp
+	(*ArtefactRef)(nil),           // 26: floatilla.v1.ArtefactRef
 }
 var file_floatilla_v1_run_proto_depIdxs = []int32{
 	2,  // 0: floatilla.v1.Resume.answer:type_name -> floatilla.v1.PromptAnswer
 	3,  // 1: floatilla.v1.Resume.event:type_name -> floatilla.v1.ExternalEvent
-	19, // 2: floatilla.v1.RunRequest.task:type_name -> floatilla.v1.Task
+	20, // 2: floatilla.v1.RunRequest.task:type_name -> floatilla.v1.Task
 	4,  // 3: floatilla.v1.RunRequest.resume:type_name -> floatilla.v1.Resume
-	20, // 4: floatilla.v1.RunRequest.process_type:type_name -> floatilla.v1.ProcessTypeSpec
+	21, // 4: floatilla.v1.RunRequest.process_type:type_name -> floatilla.v1.ProcessTypeSpec
 	1,  // 5: floatilla.v1.LogLine.tone:type_name -> floatilla.v1.LogTone
-	21, // 6: floatilla.v1.PromptRaised.prompt:type_name -> floatilla.v1.Prompt
-	22, // 7: floatilla.v1.UsageDelta.usage:type_name -> floatilla.v1.Usage
-	0,  // 8: floatilla.v1.RunFinished.outcome:type_name -> floatilla.v1.Outcome
-	23, // 9: floatilla.v1.AgentEvent.at:type_name -> google.protobuf.Timestamp
-	6,  // 10: floatilla.v1.AgentEvent.run_started:type_name -> floatilla.v1.RunStarted
-	7,  // 11: floatilla.v1.AgentEvent.heartbeat:type_name -> floatilla.v1.Heartbeat
-	8,  // 12: floatilla.v1.AgentEvent.stage_started:type_name -> floatilla.v1.StageStarted
-	9,  // 13: floatilla.v1.AgentEvent.stage_finished:type_name -> floatilla.v1.StageFinished
-	10, // 14: floatilla.v1.AgentEvent.progress:type_name -> floatilla.v1.Progress
-	11, // 15: floatilla.v1.AgentEvent.log:type_name -> floatilla.v1.LogLine
-	24, // 16: floatilla.v1.AgentEvent.artefact:type_name -> floatilla.v1.ArtefactRef
-	12, // 17: floatilla.v1.AgentEvent.prompt_raised:type_name -> floatilla.v1.PromptRaised
-	13, // 18: floatilla.v1.AgentEvent.prompt_resolved:type_name -> floatilla.v1.PromptResolved
-	14, // 19: floatilla.v1.AgentEvent.usage:type_name -> floatilla.v1.UsageDelta
-	15, // 20: floatilla.v1.AgentEvent.run_finished:type_name -> floatilla.v1.RunFinished
-	2,  // 21: floatilla.v1.Command.answer:type_name -> floatilla.v1.PromptAnswer
-	17, // 22: floatilla.v1.Command.stop:type_name -> floatilla.v1.StopRun
-	23, // [23:23] is the sub-list for method output_type
-	23, // [23:23] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	22, // 6: floatilla.v1.PromptRaised.prompt:type_name -> floatilla.v1.Prompt
+	23, // 7: floatilla.v1.UsageDelta.usage:type_name -> floatilla.v1.Usage
+	24, // 8: floatilla.v1.StoriesPublished.stories:type_name -> floatilla.v1.Story
+	0,  // 9: floatilla.v1.RunFinished.outcome:type_name -> floatilla.v1.Outcome
+	25, // 10: floatilla.v1.AgentEvent.at:type_name -> google.protobuf.Timestamp
+	6,  // 11: floatilla.v1.AgentEvent.run_started:type_name -> floatilla.v1.RunStarted
+	7,  // 12: floatilla.v1.AgentEvent.heartbeat:type_name -> floatilla.v1.Heartbeat
+	8,  // 13: floatilla.v1.AgentEvent.stage_started:type_name -> floatilla.v1.StageStarted
+	9,  // 14: floatilla.v1.AgentEvent.stage_finished:type_name -> floatilla.v1.StageFinished
+	10, // 15: floatilla.v1.AgentEvent.progress:type_name -> floatilla.v1.Progress
+	11, // 16: floatilla.v1.AgentEvent.log:type_name -> floatilla.v1.LogLine
+	26, // 17: floatilla.v1.AgentEvent.artefact:type_name -> floatilla.v1.ArtefactRef
+	12, // 18: floatilla.v1.AgentEvent.prompt_raised:type_name -> floatilla.v1.PromptRaised
+	13, // 19: floatilla.v1.AgentEvent.prompt_resolved:type_name -> floatilla.v1.PromptResolved
+	14, // 20: floatilla.v1.AgentEvent.usage:type_name -> floatilla.v1.UsageDelta
+	16, // 21: floatilla.v1.AgentEvent.run_finished:type_name -> floatilla.v1.RunFinished
+	15, // 22: floatilla.v1.AgentEvent.stories_published:type_name -> floatilla.v1.StoriesPublished
+	2,  // 23: floatilla.v1.Command.answer:type_name -> floatilla.v1.PromptAnswer
+	18, // 24: floatilla.v1.Command.stop:type_name -> floatilla.v1.StopRun
+	25, // [25:25] is the sub-list for method output_type
+	25, // [25:25] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_floatilla_v1_run_proto_init() }
@@ -1504,7 +1581,7 @@ func file_floatilla_v1_run_proto_init() {
 		(*Resume_Event)(nil),
 	}
 	file_floatilla_v1_run_proto_msgTypes[8].OneofWrappers = []any{}
-	file_floatilla_v1_run_proto_msgTypes[14].OneofWrappers = []any{
+	file_floatilla_v1_run_proto_msgTypes[15].OneofWrappers = []any{
 		(*AgentEvent_RunStarted)(nil),
 		(*AgentEvent_Heartbeat)(nil),
 		(*AgentEvent_StageStarted)(nil),
@@ -1516,8 +1593,9 @@ func file_floatilla_v1_run_proto_init() {
 		(*AgentEvent_PromptResolved)(nil),
 		(*AgentEvent_Usage)(nil),
 		(*AgentEvent_RunFinished)(nil),
+		(*AgentEvent_StoriesPublished)(nil),
 	}
-	file_floatilla_v1_run_proto_msgTypes[16].OneofWrappers = []any{
+	file_floatilla_v1_run_proto_msgTypes[17].OneofWrappers = []any{
 		(*Command_Answer)(nil),
 		(*Command_Stop)(nil),
 	}
@@ -1527,7 +1605,7 @@ func file_floatilla_v1_run_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_floatilla_v1_run_proto_rawDesc), len(file_floatilla_v1_run_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   17,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

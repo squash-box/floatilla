@@ -73,5 +73,6 @@ message AgentMessage {
     ToolRequest tool_request = 7;
     AskHuman ask = 8;
     RunFinished finished = 9;
+    StoriesPublished stories_published = 10;
   }
 }
