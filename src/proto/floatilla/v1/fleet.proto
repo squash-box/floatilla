@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package floatilla.v1;
+
+import "floatilla/v1/pack.proto";
+import "floatilla/v1/run.proto";
+import "floatilla/v1/task.proto";
+
+option go_package = "github.com/squash-box/floatilla/src/gen/go/floatilla/v1;floatillav1";
+
+// FleetService is the only surface clients (TUI, CLI, webhooks) talk to.
+service FleetService {
+  rpc SubmitTask(SubmitTaskRequest) returns (SubmitTaskResponse);
+  rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
+  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse);
+  rpc AnswerPrompt(AnswerPromptRequest) returns (AnswerPromptResponse);
+  rpc StopTask(StopTaskRequest) returns (StopTaskResponse);
+  rpc PauseTask(PauseTaskRequest) returns (PauseTaskResponse);
+  rpc ResumeTask(ResumeTaskRequest) returns (ResumeTaskResponse);
+  rpc PostEvent(PostEventRequest) returns (PostEventResponse);
+  rpc ListProcessTypes(ListProcessTypesRequest) returns (ListProcessTypesResponse);
+  // Watch streams the current fleet, then every task change. With task_id
+  // set it also streams that task's log lines (replayed from the start).
+  rpc Watch(WatchRequest) returns (stream WatchResponse);
+}
+
+message SubmitTaskRequest {
+  string name = 1;
+  string process_type = 2;
+  // Defaults to the process type's default_workflow.
+  string workflow = 3;
+  string title = 4;
+  string instructions = 5;
+  map<string, string> inputs = 6;
+  string parent_id = 7;
+}
+
+message SubmitTaskResponse {
+  Task task = 1;
+}
+
+message GetTaskRequest {
+  string id = 1;
+}
+
+message GetTaskResponse {
+  Task task = 1;
+}
+
+message ListTasksRequest {
+  // Include finished tasks (succeeded / failed).
+  bool include_finished = 1;
+}
+
+message ListTasksResponse {
+  repeated Task tasks = 1;
+}
+
+message AnswerPromptRequest {
+  string task_id = 1;
+  PromptAnswer answer = 2;
+}
+
+message AnswerPromptResponse {
+  Task task = 1;
+}
+
+message StopTaskRequest {
+  string task_id = 1;
+  string reason = 2;
+}
+
+message StopTaskResponse {
+  Task task = 1;
+}
+
+message PauseTaskRequest {
+  string task_id = 1;
+}
+
+message PauseTaskResponse {
+  Task task = 1;
+}
+
+message ResumeTaskRequest {
+  string task_id = 1;
+}
+
+message ResumeTaskResponse {
+  Task task = 1;
+}
+
+message PostEventRequest {
+  string task_id = 1;
+  ExternalEvent event = 2;
+}
+
+message PostEventResponse {
+  Task task = 1;
+}
+
+message ListProcessTypesRequest {}
+
+message ListProcessTypesResponse {
+  repeated ProcessTypeSpec process_types = 1;
+}
+
+message WatchRequest {
+  string task_id = 1;
+}
+
+message WatchResponse {
+  oneof body {
+    Task task = 1;
+    AgentEvent log = 2;
+  }
+}

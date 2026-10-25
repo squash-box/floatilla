@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Agent detail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#f2a93b}a:hover{color:#ffc46b}
+</style>
+</helmet>
+<div style="width: 1280px; height: 792px; box-sizing: border-box; background: #0f1214; color: #e6e2d8; font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; line-height: 18px; display: flex; flex-direction: column; overflow: hidden">
+  <div style="height: 18px; flex-shrink: 0; background: #21272c; display: flex; align-items: center; gap: 16px; padding: 0 8px; white-space: nowrap">
+    <span><a href="Main.dc.html" style="text-decoration: none">flotilla</a><span style="color: #9aa1a8"> › </span><span style="color: #9aa1a8">[</span><span style="font-weight: 700; letter-spacing: 0.06em">IMPL</span><span style="color: #9aa1a8">] </span><span style="font-weight: 700">auth-refactor</span></span>
+    <span style="color: #6cb6ff">{{spin}} running · 14m</span>
+    <span style="color: #9aa1a8">stage 2/7 implementation</span>
+    <span style="color: #9aa1a8">⎇ agent/auth-refactor</span>
+    <span style="flex-grow: 1"></span>
+    <span style="color: #9aa1a8">38.2k tok · $2.14</span>
+    <span style="color: #9aa1a8">160×44</span>
+  </div>
+  <div style="flex-grow: 1; min-height: 0; display: flex; gap: 16px; padding: 18px 16px">
+    <div style="position: relative; width: 288px; flex-shrink: 0; box-sizing: border-box; border: 1px solid #343b42; background: #171b1f; padding: 12px 0 8px; display: flex; flex-direction: column">
+      <span style="position: absolute; top: -10px; left: 8px; padding: 0 6px; background: #0f1214; color: #9aa1a8; font-weight: 700; font-size: 12px; letter-spacing: 0.06em">AGENT</span>
+      <div style="padding: 0 12px; display: flex; flex-direction: column">
+        <span style="font-weight: 700">Move sessions to rotating refresh tokens</span>
+        <span style="color: #9aa1a8">started 14:02 · 412 log lines</span>
+        <span style="display: flex; margin-top: 18px; white-space: pre"><span style="color: #9aa1a8">████ </span><span style="color: #6cb6ff">██</span><span style="color: #5d656d">░░ ░░░░ ░░░░ ░░░░ ░░░░ ░░░░</span></span>
+      </div>
+      <span style="margin: 18px 12px 0; color: #9aa1a8; font-weight: 700; font-size: 12px; letter-spacing: 0.06em">IMPLEMENTATION STAGES</span>
+      <div style="padding: 0 12px; display: flex; flex-direction: column; white-space: pre">
+        <span style="display: flex"><span style="color: #5d656d">├─ </span><span style="color: #7bd88f">✓</span><span style="flex-grow: 1"> setup</span><span style="color: #9aa1a8">1m</span></span>
+        <span style="display: flex; font-weight: 700"><span style="color: #5d656d; font-weight: 400">├─ </span><span style="color: #6cb6ff">{{spin}}</span><span style="flex-grow: 1"> implementation</span><span style="color: #9aa1a8; font-weight: 400">13m</span></span>
+        <span style="color: #9aa1a8"><span style="color: #5d656d">│    </span>14 edits · 2 test runs</span>
+        <span style="color: #9aa1a8"><span style="color: #5d656d">├─ </span>○ testing</span>
+        <span style="color: #9aa1a8"><span style="color: #5d656d">├─ </span>○ pr</span>
+        <span style="color: #9aa1a8"><span style="color: #5d656d">├─ </span>○ awaiting review</span>
+        <span style="color: #9aa1a8"><span style="color: #5d656d">├─ </span>○ feedback implementation</span>
+        <span style="color: #9aa1a8"><span style="color: #5d656d">└─ </span>○ closed</span>
+      </div>
+      <span style="margin: 18px 12px 0; color: #9aa1a8; font-weight: 700; font-size: 12px; letter-spacing: 0.06em">ARTEFACTS</span>
+      <div style="display: flex; flex-direction: column">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+          <button type="button" onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="all: unset; cursor: pointer; display: flex; gap: 8px; padding: 0 12px; white-space: nowrap; background: {{t.railBg}}; font-weight: {{t.weight}}">
+            <span style="color: #9aa1a8">{{t.key}}</span>
+            <span style="width: 48px">{{t.label}}</span>
+            <span style="color: #9aa1a8">{{t.meta}}</span>
+          </button>
+        </sc-for>
+        <span style="display: flex; gap: 8px; padding: 0 12px; white-space: nowrap; color: #9aa1a8"><span>4</span><span style="width: 48px">plan</span><span>docs/plans/auth-rotation.md</span></span>
+        <span style="display: flex; gap: 8px; padding: 0 12px; white-space: nowrap; color: #9aa1a8"><span>5</span><span style="width: 48px">pr</span><span>not opened yet</span></span>
+      </div>
+      <span style="flex-grow: 1"></span>
+      <div style="padding: 0 12px; border-top: 1px solid #343b42; padding-top: 4px; color: #9aa1a8; display: flex; flex-direction: column">
+        <span>context <span style="color: #6cb6ff">███▏</span><span style="color: #5d656d">░░░░░░░</span> 31%</span>
+        <span><span style="color: #e6e2d8">a</span> attach to session</span>
+      </div>
+    </div>
+    <div style="position: relative; flex-grow: 1; min-width: 0; box-sizing: border-box; border: 1px solid #f2a93b; border-radius: 2px; background: #171b1f; padding: 12px 0 0; display: flex; flex-direction: column">
+      <span style="position: absolute; top: -10px; left: 8px; padding: 0 6px; background: #0f1214; color: #f2a93b; font-weight: 700; font-size: 12px; letter-spacing: 0.06em">{{paneTitle}}</span>
+      <div style="display: flex; gap: 16px; padding: 0 12px; white-space: nowrap; border-bottom: 1px solid #343b42; padding-bottom: 4px">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+          <button type="button" onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="all: unset; cursor: pointer; padding: 0 8px; background: {{t.tabBg}}; color: {{t.tabInk}}; font-weight: {{t.weight}}">{{t.key}} {{t.label}}</button>
+        </sc-for>
+        <span style="flex-grow: 1"></span>
+        <span style="color: #9aa1a8">{{tabMeta}}</span>
+      </div>
+
+      <sc-if value="{{isLog}}" hint-placeholder-val="{{ true }}">
+        <div style="flex-grow: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 4px 12px 0">
+          <sc-for list="{{log}}" as="l" hint-placeholder-count="20">
+            <span style="display: flex; gap: 16px; white-space: pre; background: {{l.bg}}">
+              <span style="color: #5d656d; width: 64px; flex-shrink: 0">{{l.time}}</span>
+              <span style="color: {{l.kindColor}}; width: 48px; flex-shrink: 0; font-weight: 700">{{l.kind}}</span>
+              <span style="color: {{l.color}}; overflow: hidden; text-overflow: ellipsis">{{l.text}}</span>
+            </span>
+          </sc-for>
+          <span style="display: flex; gap: 16px; white-space: pre; background: #2e2618"><span style="color: #f2a93b; width: 64px">▌14:15:47</span><span style="color: #6cb6ff; width: 48px; font-weight: 700">{{spin}} edit</span><span>src/auth/middleware.ts  <span style="color: #9aa1a8">writing…</span></span></span>
+          <span style="color: #9aa1a8; border-top: 1px solid #343b42; margin-top: 4px; padding: 0 0 4px">following · pinned to bottom · <span style="color: #e6e2d8">k</span> scroll up to unpin · <span style="color: #e6e2d8">/</span> search log</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isDiff}}" hint-placeholder-val="{{ false }}">
+        <div style="flex-grow: 1; min-height: 0; display: flex; overflow: hidden">
+          <div style="width: 232px; flex-shrink: 0; border-right: 1px solid #343b42; padding: 4px 0; display: flex; flex-direction: column; white-space: pre">
+            <sc-for list="{{files}}" as="fl" hint-placeholder-count="10">
+              <span style="display: flex; padding: 0 8px 0 0; background: {{fl.bg}}; color: {{fl.ink}}; font-weight: {{fl.weight}}">
+                <span style="color: #f2a93b; width: 12px">{{fl.mark}}</span>
+                <span style="flex-grow: 1; overflow: hidden; text-overflow: ellipsis">{{fl.name}}</span>
+                <span style="color: #a8e6b4">{{fl.add}}</span><span style="color: #ffb3ad; width: 32px; text-align: right">{{fl.del}}</span>
+              </span>
+            </sc-for>
+          </div>
+          <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; padding-top: 4px">
+            <span style="padding: 0 12px; font-weight: 700">src/auth/session.ts <span style="color: #9aa1a8; font-weight: 400">· 2 hunks · +49 −13</span></span>
+            <sc-for list="{{diff}}" as="d" hint-placeholder-count="24">
+              <span style="display: flex; white-space: pre; background: {{d.bg}}; color: {{d.ink}}">
+                <span style="color: #5d656d; width: 40px; text-align: right; flex-shrink: 0">{{d.o}}</span>
+                <span style="color: #5d656d; width: 40px; text-align: right; flex-shrink: 0">{{d.n}}</span>
+                <span style="width: 24px; text-align: center; flex-shrink: 0">{{d.sign}}</span>
+                <span style="overflow: hidden"><sc-for list="{{d.parts}}" as="p" hint-placeholder-count="1"><span style="background: {{p.bg}}">{{p.t}}</span></sc-for></span>
+              </span>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isTests}}" hint-placeholder-val="{{ false }}">
+        <div style="flex-grow: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; padding: 4px 12px 0; white-space: pre">
+          <span style="display: flex; gap: 16px"><span style="font-weight: 700">pnpm test auth --watch=false</span><span style="color: #9aa1a8">ran 14:13:40 · 3.2s · after edit 11 of 14</span><span style="flex-grow: 1"></span><span style="color: #7bd88f">✓ 41 passed</span><span style="color: #f2777a; font-weight: 700">✗ 2 failed</span><span style="color: #9aa1a8">43 total</span></span>
+          <span style="color: #9aa1a8; margin-bottom: 18px">vs previous run 14:05:30 · <span style="color: #7bd88f">+2 fixed</span> · <span style="color: #e6e2d8">0 new failures</span></span>
+          <sc-for list="{{tests}}" as="r" hint-placeholder-count="12">
+            <span style="display: flex; gap: 8px; background: {{r.bg}}">
+              <span style="width: {{r.indent}}; flex-shrink: 0; color: #5d656d">{{r.tree}}</span>
+              <span style="color: {{r.color}}; width: 12px">{{r.glyph}}</span>
+              <span style="flex-grow: 1; font-weight: {{r.weight}}; color: {{r.ink}}">{{r.name}}</span>
+              <span style="color: #9aa1a8">{{r.meta}}</span>
+            </span>
+          </sc-for>
+          <div style="margin-top: 18px; border: 1px solid #343b42; display: flex; flex-direction: column; padding: 4px 12px">
+            <span style="color: #f2777a; font-weight: 700">✗ rotation.spec.ts › revokes family on reuse</span>
+            <span style="color: #9aa1a8">  expect(received).rejects.toThrow(expected)</span>
+            <span>  Expected: <span style="color: #a8e6b4">SessionError("refresh_reuse")</span></span>
+            <span>  Received: <span style="color: #ffb3ad">resolved with { access: "eyJh…", refresh: "eyJh…" }</span></span>
+            <span style="color: #9aa1a8">    at test/auth/rotation.spec.ts:58:5   <span style="color: #e6e2d8">⏎</span> open in diff</span>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+  <div style="height: 18px; flex-shrink: 0; background: #21272c; display: flex; align-items: center; gap: 16px; padding-right: 8px; white-space: nowrap; color: #9aa1a8">
+    <span style="background: #f2a93b; color: #0f1214; font-weight: 700; padding: 0 8px">{{mode}}</span>
+    <span><span style="color: #f2a93b">1 2 3</span> artefact</span>
+    <span><span style="color: #e6e2d8">j/k</span> scroll</span>
+    <span><span style="color: #e6e2d8">f</span> follow</span>
+    <span><span style="color: #e6e2d8">]</span> next file</span>
+    <span><span style="color: #e6e2d8">a</span> attach</span>
+    <span><span style="color: #e6e2d8">x</span> stop</span>
+    <span style="flex-grow: 1"></span>
+    <span><a href="Main.dc.html" style="text-decoration: none; color: #e6e2d8">esc</a> fleet</span>
+    <span><span style="color: #e6e2d8">?</span> help</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"startTab":{"editor":"enum","options":["log","diff","tests"],"default":"log"},"$preview":{"width":1280,"height":792}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { frame: 0, tab: null };
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState({ frame: (this.state.frame + 1) % 10 }), 80);
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+  renderVals() {
+    const SPIN = '⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏';
+    const tab = this.state.tab || this.props.startTab || 'log';
+    const defs = [
+      { id: 'log', key: '1', label: 'log', meta: '412 lines · live', title: 'LOG · FOLLOWING', tabMeta: '14:02 → now · 412 lines' },
+      { id: 'diff', key: '2', label: 'diff', meta: '7 files +184 −36', title: 'DIFF · 7 FILES', tabMeta: 'vs main @ 3f9c2e1 · uncommitted' },
+      { id: 'tests', key: '3', label: 'tests', meta: '✓41 ✗2 · 3m ago', title: 'TESTS · 41 ✓ 2 ✗', tabMeta: 'last run 14:13:40' }
+    ];
+    const tabs = defs.map((d) => {
+      const on = d.id === tab;
+      return {
+        ...d,
+        pressed: on ? 'true' : 'false',
+        pick: () => this.setState({ tab: d.id }),
+        railBg: on ? '#21272c' : 'transparent',
+        tabBg: on ? '#f2a93b' : 'transparent',
+        tabInk: on ? '#0f1214' : '#9aa1a8',
+        weight: on ? 700 : 400
+      };
+    });
+    const cur = defs.find((d) => d.id === tab);
+
+    const K = { start: '#9aa1a8', read: '#9aa1a8', grep: '#9aa1a8', think: '#9aa1a8', write: '#e6e2d8', edit: '#e6e2d8', bash: '#6cb6ff', '': '#9aa1a8' };
+    const L = (time, kind, text, color, bg) => ({ time, kind, text, kindColor: K[kind], color: color || (kind === 'edit' || kind === 'write' || kind === 'bash' ? '#e6e2d8' : '#9aa1a8'), bg: bg || 'transparent' });
+    const log = [
+      L('14:02:11', 'start', 'task: move sessions to rotating refresh tokens'),
+      L('14:02:13', 'read', 'src/auth/session.ts (212 lines)'),
+      L('14:02:14', 'read', 'src/auth/tokens.ts (98 lines)'),
+      L('14:02:20', 'grep', '"issueSession" src/ → 9 hits in 5 files'),
+      L('14:03:02', 'think', 'session ttl is hard-coded; refresh tokens never rotate or revoke'),
+      L('14:03:40', 'write', 'docs/plans/auth-rotation.md +22'),
+      L('14:05:12', 'write', 'test/auth/rotation.spec.ts +46'),
+      L('14:05:30', 'bash', 'pnpm test auth --watch=false'),
+      L('', '', '│ FAIL  test/auth/rotation.spec.ts', '#f2777a'),
+      L('', '', '│ Tests: 4 failed, 37 passed, 41 total', '#9aa1a8'),
+      L('14:07:51', 'edit', 'src/auth/tokens.ts +22 −6'),
+      L('14:08:40', 'edit', 'src/auth/store.ts +19'),
+      L('14:09:03', 'edit', 'src/auth/session.ts +18 −4'),
+      L('14:11:40', 'bash', 'pnpm tsc --noEmit'),
+      L('', '', '│ ✓ no errors', '#7bd88f'),
+      L('14:12:10', 'edit', 'test/auth/session.spec.ts +14 −14'),
+      L('14:13:02', 'edit', 'src/auth/session.ts +31 −9'),
+      L('14:13:40', 'bash', 'pnpm test auth --watch=false'),
+      L('', '', '│ ✗ revokes family on reuse · ✗ keeps access token valid after rotation', '#f2777a'),
+      L('', '', '│ Tests: 2 failed, 41 passed, 43 total', '#9aa1a8'),
+      L('14:14:22', 'think', 'reuse path never checks wasUsed(jti) before refresh'),
+      L('14:15:02', 'read', 'src/auth/middleware.ts (64 lines)')
+    ];
+
+    const files = [
+      { name: 'src/auth/', add: '', del: '', dir: true },
+      { name: '├─ session.ts', add: '+49', del: '−13', sel: true },
+      { name: '├─ tokens.ts', add: '+22', del: '−6' },
+      { name: '├─ store.ts', add: '+19', del: '−0' },
+      { name: '└─ middleware.ts', add: '+12', del: '−3' },
+      { name: 'test/auth/', add: '', del: '', dir: true },
+      { name: '├─ rotation.spec.ts', add: '+46', del: '−0' },
+      { name: '└─ session.spec.ts', add: '+14', del: '−14' },
+      { name: 'docs/plans/', add: '', del: '', dir: true },
+      { name: '└─ auth-rotation.md', add: '+22', del: '−0' }
+    ].map((x) => ({ ...x, mark: x.sel ? '▌' : ' ', bg: x.sel ? '#2e2618' : 'transparent', ink: x.dir ? '#9aa1a8' : '#e6e2d8', weight: x.sel ? 700 : 400 }));
+
+    const T = { ctx: ['transparent', '#e6e2d8', ' '], add: ['#15291b', '#a8e6b4', '+'], del: ['#33191b', '#ffb3ad', '−'], hunk: ['#1a2330', '#6cb6ff', ''] };
+    const D = (kind, o, n, parts) => {
+      const t = T[kind];
+      const ps = (typeof parts === 'string' ? [[parts]] : parts).map((p) => ({ t: p[0], bg: p[1] ? (kind === 'add' ? '#245232' : '#5c2a2d') : 'transparent' }));
+      return { o: o || '', n: n || '', sign: t[2], bg: t[0], ink: t[1], parts: ps };
+    };
+    const diff = [
+      D('hunk', '', '', '@@ -41,8 +41,10 @@ export async function issueSession(user: User) {'),
+      D('ctx', '41', '41', '  const now = Date.now();'),
+      D('del', '42', '', [['  const ttl = '], ['3600', true], [';']]),
+      D('add', '', '42', [['  const ttl = '], ['config.session.ttlSeconds ?? 3600', true], [';']]),
+      D('add', '', '43', '  const family = randomUUID();'),
+      D('ctx', '43', '44', '  const access = await signAccess(user.id, ttl);'),
+      D('del', '44', '', [['  const refresh = await signRefresh(user.id'], [');', true]]),
+      D('add', '', '45', [['  const refresh = await signRefresh(user.id'], [', { family });', true]]),
+      D('add', '', '46', '  await store.saveFamily(family, user.id, now);'),
+      D('ctx', '45', '47', '  return { access, refresh, expiresAt: now + ttl * 1000 };'),
+      D('ctx', '46', '48', '}'),
+      D('hunk', '', '', '@@ -86,7 +95,17 @@ export async function refreshSession(token: string) {'),
+      D('ctx', '86', '95', '  const claims = await verifyRefresh(token);'),
+      D('add', '', '96', '  if (await store.isRevoked(claims.family)) {'),
+      D('add', '', '97', "    throw new SessionError('refresh_reuse');"),
+      D('add', '', '98', '  }'),
+      D('add', '', '99', '  if (await store.wasUsed(claims.jti)) {'),
+      D('add', '', '100', '    await store.revokeFamily(claims.family);'),
+      D('add', '', '101', "    throw new SessionError('refresh_reuse');"),
+      D('add', '', '102', '  }'),
+      D('add', '', '103', '  await store.markUsed(claims.jti);'),
+      D('ctx', '87', '104', '  const user = await users.get(claims.sub);'),
+      D('del', '88', '', [['  return issueSession(user'], [');', true]]),
+      D('add', '', '105', [['  return issueSession(user'], [', { family: claims.family });', true]]),
+      D('ctx', '89', '106', '}')
+    ];
+
+    const R = (tree, glyph, name, meta, opts) => {
+      const o = opts || {};
+      return { tree, glyph, name, meta, indent: o.indent || '16px', color: glyph === '✗' ? '#f2777a' : '#7bd88f', ink: o.ink || '#e6e2d8', weight: o.bold ? 700 : 400, bg: o.sel ? '#2e2618' : 'transparent' };
+    };
+    const tests = [
+      R('', '✓', 'test/auth/session.spec.ts', '12 tests · 0.8s', { indent: '0px' }),
+      R('', '✓', 'test/auth/tokens.spec.ts', '9 tests · 0.4s', { indent: '0px' }),
+      R('', '✗', 'test/auth/rotation.spec.ts', '6 tests · 1.1s · 2 failed', { indent: '0px', bold: true }),
+      R('├─', '✓', 'issues a family id with every session', '84ms', { ink: '#9aa1a8' }),
+      R('├─', '✓', 'rotates refresh token on use', '112ms', { ink: '#9aa1a8' }),
+      R('├─', '✓', 'rejects an expired refresh token', '41ms', { ink: '#9aa1a8' }),
+      R('├─', '✗', 'revokes family on reuse', '203ms', { sel: true, bold: true }),
+      R('├─', '✗', 'keeps access token valid after rotation', '96ms'),
+      R('└─', '✓', 'stores used jti with ttl', '58ms', { ink: '#9aa1a8' }),
+      R('', '✓', 'test/auth/middleware.spec.ts', '16 tests · 0.9s', { indent: '0px' })
+    ];
+
+    return {
+      spin: SPIN[this.state.frame],
+      tabs,
+      paneTitle: cur.title,
+      tabMeta: cur.tabMeta,
+      mode: cur.label.toUpperCase(),
+      isLog: tab === 'log',
+      isDiff: tab === 'diff',
+      isTests: tab === 'tests',
+      log,
+      files,
+      diff,
+      tests
+    };
+  }
+}
+</script>
+</body>
+</html>

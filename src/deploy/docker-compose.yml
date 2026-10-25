@@ -1,0 +1,112 @@
+# Local floatilla stack. From src/:  make up   (or see the Makefile targets)
+name: floatilla
+
+x-launcher: &launcher
+  image: floatilla/platform:dev
+  command: ["floatilla-launcher"]
+  restart: unless-stopped
+  depends_on:
+    control:
+      condition: service_started
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  environment: &launcher-env
+    NATS_URL: nats://nats:4222
+    FLOATILLA_DOCKER_NETWORK: floatilla
+    FLOATILLA_CONCURRENCY: "4"
+    # Passed through to sandboxes. Engine by default: Claude Code on your
+    # subscription if CLAUDE_CODE_OAUTH_TOKEN is set (from `claude
+    # setup-token`), else floatilla's own loop on ANTHROPIC_API_KEY, else the
+    # scripted model (no API calls). FLOATILLA_MODEL_PROVIDER overrides:
+    # claude-code | anthropic | scripted.
+    CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN:-}
+    ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    FLOATILLA_MODEL_PROVIDER: ${FLOATILLA_MODEL_PROVIDER:-}
+    FLOATILLA_MODEL: ${FLOATILLA_MODEL:-}
+    FLOATILLA_EFFORT: ${FLOATILLA_EFFORT:-}
+    FLOATILLA_KEEP_SANDBOXES: ${FLOATILLA_KEEP_SANDBOXES:-false}
+
+services:
+  nats:
+    image: nats:2.12-alpine
+    command: ["-js", "-sd", "/data", "-m", "8222"]
+    restart: unless-stopped
+    ports: ["4222:4222", "8222:8222"]
+    volumes: [nats-data:/data]
+
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: floatilla
+      POSTGRES_PASSWORD: floatilla
+      POSTGRES_DB: floatilla
+    volumes: [pg-data:/var/lib/postgresql]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U floatilla"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  control:
+    image: floatilla/platform:dev
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: platform
+    command: ["floatilla-control"]
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgres://floatilla:floatilla@postgres:5432/floatilla
+      NATS_URL: nats://nats:4222
+      # Story tracker (Plane). Unset PLANE_API_KEY disables the sync.
+      PLANE_API_KEY: ${PLANE_API_KEY:-}
+      PLANE_BASE_URL: ${PLANE_BASE_URL:-https://api.plane.so}
+      PLANE_APP_URL: ${PLANE_APP_URL:-}
+      PLANE_WORKSPACE: ${PLANE_WORKSPACE:-}
+      PLANE_PROJECT: ${PLANE_PROJECT:-}
+      FLOATILLA_TRACKER_PUBLISH_TO: ${FLOATILLA_TRACKER_PUBLISH_TO:-backlog}
+      FLOATILLA_TRACKER_INTERVAL: ${FLOATILLA_TRACKER_INTERVAL:-30s}
+      FLOATILLA_TRACKER_REPO: ${FLOATILLA_TRACKER_REPO:-}
+    ports: ["${FLOATILLA_PORT:-7420}:8080"]
+
+  launcher-plan:
+    <<: *launcher
+    environment:
+      <<: *launcher-env
+      FLOATILLA_PROCESS_TYPE: plan
+
+  launcher-impl:
+    <<: *launcher
+    environment:
+      <<: *launcher-env
+      FLOATILLA_PROCESS_TYPE: impl
+
+  launcher-deploy:
+    <<: *launcher
+    environment:
+      <<: *launcher-env
+      FLOATILLA_PROCESS_TYPE: deploy
+
+  # Never run by compose: launchers start one container from this image per
+  # run. Listed so `docker compose build` builds it.
+  sandbox:
+    image: floatilla/sandbox:dev
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: sandbox
+    profiles: ["build"]
+
+networks:
+  default:
+    name: floatilla
+
+volumes:
+  nats-data:
+  pg-data:

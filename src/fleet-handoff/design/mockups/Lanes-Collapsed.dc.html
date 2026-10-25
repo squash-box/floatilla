@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fleet grid, empty lane collapsed</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#f2a93b}a:hover{color:#ffc46b}
+</style>
+</helmet>
+<div style="width: 1280px; height: 792px; box-sizing: border-box; background: #0f1214; color: #e6e2d8; font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; line-height: 18px; display: flex; flex-direction: column; overflow: hidden">
+  <div style="height: 18px; flex-shrink: 0; background: #21272c; display: flex; align-items: center; gap: 16px; padding: 0 8px; white-space: nowrap">
+    <span style="font-weight: 700">flotilla</span>
+    <span><span style="color: #9aa1a8">plan</span> 2  <span style="color: #9aa1a8">impl</span> 8  <span style="color: #9aa1a8">deploy</span> 0</span>
+    <span style="color: #343b42">│</span>
+    <span style="color: #6cb6ff">{{spin}} 6 running</span>
+    <span style="color: #c99bf0; font-weight: 700">◆ 2 waiting</span>
+    <span style="color: #f2777a">✗ 1 failed</span>
+    <span style="color: #9aa1a8">‖ 1 paused</span>
+    <span style="flex-grow: 1"></span>
+    <span style="color: #9aa1a8">293.5k tok · $15.83</span>
+    <span style="color: #9aa1a8">160×44</span>
+  </div>
+  <div style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; gap: 18px; padding: 18px 16px">
+    <div style="height: 18px; flex-shrink: 0; display: flex; gap: 16px; white-space: nowrap; color: #9aa1a8">
+      <span style="color: #f2a93b; font-weight: 700; letter-spacing: 0.06em; font-size: 12px">AGENTS · 10</span>
+      <span>group <span style="color: #e6e2d8">by type</span></span>
+      <span>sort <span style="color: #e6e2d8">needs you first</span></span>
+      <span style="flex-grow: 1"></span>
+      <span>deploy empty 2m · collapsed · lanes 1 : 3 : rail</span>
+    </div>
+    <div style="flex-grow: 1; min-height: 0; display: flex; gap: 24px">
+      <sc-for list="{{lanes}}" as="lane" hint-placeholder-count="3">
+        <sc-if value="{{lane.collapsed}}" hint-placeholder-val="{{ false }}">
+          <div style="flex: 0 0 112px; box-sizing: border-box; border: 1px dashed #343b42; display: flex; flex-direction: column; padding: 4px 8px; color: #9aa1a8; white-space: pre">
+            <span style="font-weight: 700; font-size: 12px; letter-spacing: 0.06em; color: #e6e2d8">{{lane.title}}</span>
+            <span>0 agents</span>
+            <span style="margin-top: 18px; color: #5d656d">stages</span>
+            <sc-for list="{{lane.stages}}" as="s" hint-placeholder-count="3">
+              <span><span style="color: #5d656d">○ </span>{{s}}</span>
+            </sc-for>
+            <span style="margin-top: 18px; color: #5d656d">last run</span>
+            <span>{{lane.last}}</span>
+            <span style="flex-grow: 1"></span>
+            <span><span style="color: #e6e2d8">n</span> new</span>
+            <span><span style="color: #e6e2d8">⏎</span> expand</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{lane.open}}" hint-placeholder-val="{{ true }}">
+          <div style="flex: {{lane.grow}} 1 0px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+            <div style="flex-shrink: 0; display: flex; flex-direction: column; border-bottom: 1px solid #343b42; padding-bottom: 4px">
+              <span style="display: flex; gap: 8px; white-space: nowrap">
+                <span style="font-weight: 700; font-size: 12px; letter-spacing: 0.06em">{{lane.title}} · {{lane.count}}</span>
+                <span style="flex-grow: 1"></span>
+                <sc-for list="{{lane.counts}}" as="c" hint-placeholder-count="2">
+                  <span style="color: {{c.color}}; font-weight: {{c.weight}}">{{c.t}}</span>
+                </sc-for>
+              </span>
+              <span style="display: flex; gap: 8px; white-space: nowrap; color: #9aa1a8">
+                <span style="overflow: hidden; text-overflow: ellipsis">{{lane.legend}}</span>
+                <span style="flex-grow: 1"></span>
+                <span style="color: #7bd88f">{{lane.recent}}</span>
+              </span>
+            </div>
+            <div style="flex-grow: 1; min-height: 0; display: grid; grid-template-columns: {{lane.gridCols}}; grid-template-rows: repeat(3, minmax(0, 1fr)); column-gap: 16px; row-gap: 18px">
+              <sc-for list="{{lane.slots}}" as="a" hint-placeholder-count="3">
+                <sc-if value="{{a.isAgent}}" hint-placeholder-val="{{ true }}">
+                  <a href="Detail.dc.html" aria-label="{{a.aria}}" style="position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; box-sizing: border-box; border: 1px solid {{a.border}}; border-radius: {{a.radius}}; background: #171b1f; padding: 12px 12px 6px; color: #e6e2d8; text-decoration: none">
+                    <span style="position: absolute; top: -10px; left: 8px; padding: 0 6px; background: #0f1214; font-weight: 700; color: {{a.titleColor}}; white-space: nowrap">{{a.name}}</span>
+                    <span style="position: absolute; top: -10px; right: 8px; padding: 0 6px; background: #0f1214; color: #9aa1a8; white-space: nowrap">{{a.elapsed}}</span>
+                    <span style="display: flex; justify-content: space-between; gap: 16px; white-space: nowrap">
+                      <span style="color: {{a.color}}; font-weight: {{a.weight}}">{{a.glyph}} {{a.state}}</span>
+                      <span style="color: #9aa1a8">{{a.spend}}</span>
+                    </span>
+                    <span style="display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{a.task}}</span>
+                    <span style="display: flex; white-space: pre; margin-top: 4px">
+                      <sc-for list="{{a.track}}" as="s" hint-placeholder-count="3"><span style="margin-right: 8px"><span style="color: {{s.color}}">{{s.a}}</span><span style="color: #5d656d">{{s.b}}</span></span></sc-for>
+                    </span>
+                    <span style="display: flex; gap: 8px; white-space: nowrap"><span style="color: #9aa1a8">{{a.stageNum}}</span><span style="font-weight: 700; overflow: hidden; text-overflow: ellipsis">{{a.stageName}}</span></span>
+                    <span style="display: block; color: {{a.activityColor}}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{a.activity}}</span>
+                    <sc-for list="{{a.tail}}" as="t" hint-placeholder-count="1">
+                      <span style="display: block; color: #9aa1a8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><span style="color: #5d656d">│ </span>{{t}}</span>
+                    </sc-for>
+                    <sc-if value="{{a.waiting}}" hint-placeholder-val="{{ false }}">
+                      <span style="display: flex; gap: 16px; white-space: nowrap; color: #9aa1a8">
+                        <span><span style="background: #c99bf0; color: #0f1214; font-weight: 700; padding: 0 4px">y</span> approve</span>
+                        <span><span style="background: #21272c; color: #e6e2d8; padding: 0 4px">n</span> deny</span>
+                      </span>
+                    </sc-if>
+                    <span style="flex-grow: 1"></span>
+                    <span style="display: flex; white-space: pre; border-top: 1px solid #343b42; padding-top: 4px; overflow: hidden">
+                      <sc-for list="{{a.facts}}" as="x" hint-placeholder-count="4"><span style="color: {{x.c}}">{{x.t}}</span></sc-for>
+                    </span>
+                  </a>
+                </sc-if>
+                <sc-if value="{{a.empty}}" hint-placeholder-val="{{ false }}">
+                  <div style="box-sizing: border-box; border: 1px dashed #343b42; display: flex; align-items: center; justify-content: center; color: #9aa1a8; white-space: nowrap">{{a.emptyText}}</div>
+                </sc-if>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </sc-for>
+    </div>
+  </div>
+  <div style="height: 18px; flex-shrink: 0; background: #21272c; display: flex; align-items: center; gap: 16px; padding-right: 8px; white-space: nowrap; color: #9aa1a8">
+    <span style="background: #f2a93b; color: #0f1214; font-weight: 700; padding: 0 8px">GRID</span>
+    <span><span style="color: #e6e2d8">hjkl</span> move</span>
+    <span><span style="color: #e6e2d8">[ ]</span> lane</span>
+    <span><span style="color: #f2a93b">⏎</span> open</span>
+    <span><span style="color: #e6e2d8">y/n</span> answer</span>
+    <span><span style="color: #e6e2d8">n</span> new agent</span>
+    <span><span style="color: #e6e2d8">z</span> pin lanes open</span>
+    <span><span style="color: #e6e2d8">/</span> filter</span>
+    <span style="flex-grow: 1"></span>
+    <span><span style="color: #e6e2d8">?</span> help</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":792}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { frame: 0 };
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState({ frame: (this.state.frame + 1) % 10 }), 80);
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+  renderVals() {
+    const SPIN = '⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏';
+    const f = this.state.frame;
+    const C = { running: '#6cb6ff', waiting: '#c99bf0', success: '#7bd88f', failed: '#f2777a', paused: '#9aa1a8' };
+    const GLYPH = { waiting: '◆', success: '✓', failed: '✗', paused: '‖' };
+    const LABEL = { running: 'running', waiting: 'waiting', success: 'done', failed: 'failed', paused: 'paused' };
+    const M = '#9aa1a8', INK = '#e6e2d8', ADD = '#a8e6b4', DEL = '#ffb3ad', OK = '#7bd88f', BAD = '#f2777a';
+    const TYPES = {
+      plan: { title: 'PLANNING', short: 'plan', seg: 8, stages: ['exploration', 'specification', 'validation'], legend: 'explore › spec › validate', recent: '✓1 recent' },
+      impl: { title: 'IMPLEMENTATION', short: 'impl', seg: 3, stages: ['setup', 'implementation', 'testing', 'pr', 'awaiting review', 'feedback implementation', 'closed'], legend: 'setup › implementation › testing › pr › awaiting review › feedback › closed', recent: '' },
+      deploy: { title: 'DEPLOY', short: 'deploy', seg: 8, stages: ['setup', 'deploy', 'verify'], legend: '', recent: '', last: '✓ 3h ago' }
+    };
+    const code = (add, del, pass, fail) => {
+      const out = [['diff ', M], [add, ADD], [' ' + del, DEL], ['  tests ', M]];
+      if (pass) { out.push([pass, OK]); out.push([' ' + fail, fail === '✗0' ? M : BAD]); } else { out.push(['—', M]); }
+      return out;
+    };
+    const A = [
+      { type: 'plan', name: 'fx-retry-spec', state: 'waiting', stage: 2, frac: 0.5, elapsed: '12m', spend: '$0.74', task: 'Spec retry policy for FX rate fetch', activity: 'approve spec? 2 open questions', tail: ['wrote docs/specs/fx-retry.md'], facts: [['spec ', M], ['4 sections', INK], ['  open q ', M], ['2', '#c99bf0']] },
+      { type: 'plan', name: 'otel-tracing', state: 'running', stage: 0, frac: 0.6, elapsed: '4m', spend: '$0.29', task: 'Plan OpenTelemetry spans for Service Bus', activity: 'reading src/bus/handlers/', tail: ['grep ServiceBusReceiver → 11 hits', 'read src/bus/handlers/orders.ts'], facts: [['notes ', M], ['14 findings', INK]] },
+      { type: 'impl', name: 'flaky-tests', state: 'waiting', stage: 2, frac: 0.7, elapsed: '22m', spend: '$1.74', task: 'Stabilise flaky checkout e2e suite', activity: 'approve Bash(pnpm test --runInBand)?', tail: ['ran checkout.spec.ts 20× · 0 fails'], facts: code('+42', '−17', '✓118', '✗0') },
+      { type: 'impl', name: 'ledger-migration', state: 'failed', stage: 2, frac: 0.8, elapsed: '41m', spend: '$3.20', task: 'Migrate ledger entries to v3 schema', activity: 'exit 1 · 2 tests failing', tail: ['✗ rolls back partial batch', '✗ preserves entry ordering'], facts: code('+312', '−140', '✓64', '✗2') },
+      { type: 'impl', name: 'auth-refactor', state: 'running', stage: 1, frac: 0.6, elapsed: '14m', spend: '$2.14', task: 'Move sessions to rotating refresh tokens', activity: 'editing src/auth/middleware.ts', tail: ['edit src/auth/session.ts +31 −9', 'bash pnpm tsc --noEmit · ✓'], facts: code('+184', '−36', '✓41', '✗2') },
+      { type: 'impl', name: 'orders-pagination', state: 'running', stage: 5, frac: 0.4, elapsed: '1h20m', spend: '$3.41', task: 'Paginate /v2/orders with cursors', activity: 'addressing review on #142', tail: ['● resolved: clamp limit to 100', 'edit src/api/orders.ts +6 −2'], facts: [['diff ', M], ['+274', ADD], [' −53', DEL], ['  pr ', M], ['#142', INK]] },
+      { type: 'impl', name: 'deps-bump', state: 'running', stage: 3, frac: 0.5, elapsed: '27m', spend: '$2.38', task: 'Bump typescript 5.6 → 5.9 and fix types', activity: 'writing PR description', tail: ['git push -u origin agent/deps-bump', 'gh pr create --draft'], facts: code('+221', '−198', '✓203', '✗0') },
+      { type: 'impl', name: 'pricing-cache', state: 'running', stage: 2, frac: 0.3, elapsed: '9m', spend: '$1.12', task: 'Add Redis read-through cache to pricing API', activity: 'running pnpm test pricing', tail: ['PASS cache.spec.ts (12)', 'RUNS invalidate.spec.ts'], facts: code('+96', '−8', '✓12', '✗0') },
+      { type: 'impl', name: 'flag-cleanup', state: 'running', stage: 0, frac: 0.5, elapsed: '2m', spend: '$0.24', task: 'Remove expired feature flags', activity: 'installing dependencies', tail: ['git worktree add agent/flag-cleanup', 'pnpm install --frozen-lockfile'], facts: [['diff ', M], ['—', M], ['  tests ', M], ['—', M]] },
+      { type: 'impl', name: 'docs-sweep', state: 'paused', stage: 1, frac: 0.4, elapsed: '18m', spend: '$0.57', task: 'Refresh API reference for v2 endpoints', activity: 'paused 11m ago · r to resume', tail: ['write docs/api/orders.md +48', 'edit docs/api/index.md +6 −2'], facts: code('+77', '−20', '', '') }
+    ];
+    const track = (a) => {
+      const T = TYPES[a.type];
+      const w = T.seg;
+      return T.stages.map((s, i) => {
+        if (a.state === 'success' || i < a.stage) return { a: '█'.repeat(w), b: '', color: a.state === 'success' ? OK : M };
+        if (i === a.stage) { const n = Math.max(1, Math.round(a.frac * w)); return { a: '█'.repeat(n), b: '░'.repeat(w - n), color: C[a.state] }; }
+        return { a: '', b: '░'.repeat(w), color: M };
+      });
+    };
+    let idx = 0;
+    const toTile = (a) => {
+      const T = TYPES[a.type];
+      const selected = a.name === 'flaky-tests';
+      const i = idx++;
+      return {
+        ...a,
+        isAgent: true,
+        empty: false,
+        glyph: a.state === 'running' ? SPIN[(f + i * 3) % 10] : GLYPH[a.state],
+        state: LABEL[a.state],
+        color: C[a.state],
+        weight: a.state === 'waiting' ? 700 : 400,
+        track: track(a),
+        stageNum: (a.stage + 1) + '/' + T.stages.length,
+        stageName: T.stages[a.stage],
+        activityColor: a.state === 'running' ? INK : C[a.state],
+        tail: a.tail.slice(0, a.state === 'waiting' ? 1 : 2),
+        facts: a.facts.map((x) => ({ t: x[0], c: x[1] })),
+        border: selected ? '#f2a93b' : '#343b42',
+        radius: selected ? '2px' : '0',
+        titleColor: selected ? '#f2a93b' : INK,
+        waiting: a.state === 'waiting',
+        aria: 'Open ' + a.name + ', ' + T.short + ' agent, ' + LABEL[a.state]
+      };
+    };
+    const order = ['plan', 'impl', 'deploy'];
+    const counts = {};
+    order.forEach((t) => { counts[t] = A.filter((x) => x.type === t).length; });
+    const open = order.filter((t) => counts[t] > 0);
+    const totalAgents = open.reduce((s, t) => s + counts[t], 0);
+    const TILE_COLS = 4;
+    const colsFor = {};
+    open.forEach((t) => { colsFor[t] = Math.max(1, Math.round(TILE_COLS * counts[t] / totalAgents)); });
+    const lanes = order.map((type) => {
+      const T = TYPES[type];
+      const list = A.filter((x) => x.type === type);
+      if (!list.length) {
+        return { collapsed: true, open: false, title: T.title, stages: T.stages, last: T.last };
+      }
+      const cols = colsFor[type];
+      const cap = cols * 3;
+      const slots = list.slice(0, cap).map(toTile);
+      while (slots.length < cap) slots.push({ isAgent: false, empty: true, emptyText: 'n  new ' + T.short + ' agent' });
+      const cs = [];
+      ['running', 'waiting', 'failed', 'success', 'paused'].forEach((st) => {
+        const n = list.filter((x) => x.state === st).length;
+        if (n) cs.push({ t: (st === 'running' ? SPIN[f] : GLYPH[st]) + n, color: C[st], weight: st === 'waiting' ? 700 : 400 });
+      });
+      return {
+        collapsed: false,
+        open: true,
+        title: T.title,
+        count: list.length,
+        counts: cs,
+        legend: T.legend,
+        recent: T.recent,
+        grow: cols,
+        gridCols: 'repeat(' + cols + ', minmax(0, 1fr))',
+        slots
+      };
+    });
+    return { lanes, spin: SPIN[f] };
+  }
+}
+</script>
+</body>
+</html>

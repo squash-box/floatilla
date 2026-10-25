@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Agent detail, 80 columns</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#f2a93b}a:hover{color:#ffc46b}
+</style>
+</helmet>
+<div style="width: 640px; height: 432px; box-sizing: border-box; background: #0f1214; color: #e6e2d8; font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; line-height: 18px; display: flex; flex-direction: column; overflow: hidden">
+  <div style="height: 18px; flex-shrink: 0; background: #21272c; display: flex; align-items: center; gap: 12px; padding: 0 8px; white-space: nowrap">
+    <span><span style="color: #9aa1a8">‹ </span><span style="font-weight: 700">auth-refactor</span></span>
+    <span style="color: #9aa1a8">[<span style="color: #e6e2d8; font-weight: 700">IMPL</span>]</span>
+    <span style="color: #6cb6ff">⠹ 2/7 implementation</span>
+    <span style="flex-grow: 1"></span>
+    <span style="color: #9aa1a8">$2.14</span>
+    <span style="color: #9aa1a8">80×24</span>
+  </div>
+  <div style="height: 18px; flex-shrink: 0; display: flex; gap: 8px; padding: 0 8px; white-space: pre; border-bottom: 1px solid #343b42; color: #9aa1a8">
+    <span style="padding: 0 8px">1 log</span>
+    <span style="padding: 0 8px; background: #f2a93b; color: #0f1214; font-weight: 700">2 diff</span>
+    <span style="padding: 0 8px">3 tests <span style="color: #f2777a">✗2</span></span>
+    <span style="flex-grow: 1"></span>
+    <span>session.ts · 1/7 files</span>
+  </div>
+  <div style="flex-grow: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; padding-top: 4px; background: #171b1f">
+    <sc-for list="{{diff}}" as="d" hint-placeholder-count="20">
+      <span style="display: flex; white-space: pre; background: {{d.bg}}; color: {{d.ink}}">
+        <span style="color: #5d656d; width: 32px; text-align: right; flex-shrink: 0">{{d.n}}</span>
+        <span style="width: 24px; text-align: center; flex-shrink: 0">{{d.sign}}</span>
+        <span style="overflow: hidden; text-overflow: ellipsis">{{d.t}}</span>
+      </span>
+    </sc-for>
+  </div>
+  <div style="height: 18px; flex-shrink: 0; background: #21272c; display: flex; align-items: center; gap: 12px; padding-right: 8px; white-space: nowrap; color: #9aa1a8">
+    <span style="background: #f2a93b; color: #0f1214; font-weight: 700; padding: 0 8px">DIFF</span>
+    <span><span style="color: #f2a93b">1-3</span> artefact</span>
+    <span><span style="color: #e6e2d8">]</span> next file</span>
+    <span><span style="color: #e6e2d8">j/k</span> scroll</span>
+    <span style="flex-grow: 1"></span>
+    <span><span style="color: #e6e2d8">esc</span> fleet</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":640,"height":432}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const T = { ctx: ['transparent', '#e6e2d8', ' '], add: ['#15291b', '#a8e6b4', '+'], del: ['#33191b', '#ffb3ad', '−'], hunk: ['#1a2330', '#6cb6ff', ''] };
+    const D = (k, n, t) => ({ n, t, sign: T[k][2], bg: T[k][0], ink: T[k][1] });
+    const diff = [
+      D('hunk', '', '@@ -41,8 +41,10 @@ issueSession(user: User)'),
+      D('ctx', '41', '  const now = Date.now();'),
+      D('del', '', '  const ttl = 3600;'),
+      D('add', '42', '  const ttl = config.session.ttlSeconds ?? 3600;'),
+      D('add', '43', '  const family = randomUUID();'),
+      D('ctx', '44', '  const access = await signAccess(user.id, ttl);'),
+      D('del', '', '  const refresh = await signRefresh(user.id);'),
+      D('add', '45', '  const refresh = await signRefresh(user.id, { family });'),
+      D('add', '46', '  await store.saveFamily(family, user.id, now);'),
+      D('ctx', '47', '  return { access, refresh, expiresAt: now + ttl * 1000 };'),
+      D('ctx', '48', '}'),
+      D('hunk', '', '@@ -86,7 +95,17 @@ refreshSession(token: string)'),
+      D('ctx', '95', '  const claims = await verifyRefresh(token);'),
+      D('add', '96', '  if (await store.isRevoked(claims.family)) {'),
+      D('add', '97', "    throw new SessionError('refresh_reuse');"),
+      D('add', '98', '  }'),
+      D('add', '99', '  if (await store.wasUsed(claims.jti)) {'),
+      D('add', '100', '    await store.revokeFamily(claims.family);'),
+      D('add', '101', "    throw new SessionError('refresh_reuse');")
+    ];
+    return { diff };
+  }
+}
+</script>
+</body>
+</html>
