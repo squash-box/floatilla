@@ -64,9 +64,19 @@ Each run picks an engine (`FLOATILLA_MODEL_PROVIDER`, or by default from the cre
 | `anthropic` | `ANTHROPIC_API_KEY` set | floatilla's own loop on the Messages API, billed per token |
 | `scripted` | neither | a deterministic plan with no API calls (used by CI) |
 
-To run on your subscription, generate a token with `claude setup-token`, put it in `deploy/.env` (see `deploy/.env.example`), then `make up`. Every engine keeps the same harness behaviour: the pack's permission policy and prompts on the fleet board, stage tools, artefacts and parking. With Claude Code, read-only tools (Read, Glob, Grep) are approved by Claude Code itself; edits and Bash go through the policy. Subscription runs meter tokens at $0, and plan limits appear on the task when they're hit. Defaults: `claude-opus-5-5`, effort `high` (`FLOATILLA_MODEL`, `FLOATILLA_EFFORT`).
+To run on your subscription, generate a token with `claude setup-token`, put it in `deploy/.env` (see `deploy/.env.example`), then `make up`. Every engine keeps the same harness behaviour: the pack's permission policy and prompts on the fleet board, stage tools, artefacts and parking. With Claude Code, read-only tools (Read, Glob, Grep) are approved by Claude Code itself; edits and Bash go through the policy. `FLOATILLA_YOLO=true` stops the permission prompts: tools a pack would ask about run straight away. Denied tools stay denied, writes stay inside the workspace, and plan approvals and agents' questions still come to you. Subscription runs meter tokens at $0, and plan limits appear on the task when they're hit. Defaults: `claude-opus-5-5`, effort `high` (`FLOATILLA_MODEL`, `FLOATILLA_EFFORT`).
 
 The subscription engine is for your own use: Anthropic doesn't allow third-party products to offer claude.ai login, so anyone you share floatilla with should use an API key.
+
+## GitHub access
+
+Implementation agents push their branch and open a PR with `gh`. Set `GH_TOKEN` in `deploy/.env` to a [fine-grained token](https://github.com/settings/personal-access-tokens) limited to the repos agents work on, with Contents and Pull requests set to read/write. At the start of each run, the supervisor:
+
+- points git's GitHub credentials at `gh`, which reads the token from the environment, so the token is never written to disk
+- rewrites `git@github.com:` remotes to HTTPS, since sandboxes have no SSH keys
+- authors commits as the token's account, using its noreply email so no address is exposed; `FLOATILLA_GIT_NAME` and `FLOATILLA_GIT_EMAIL` override this
+
+The agent can read the token, so keep its scope narrow.
 
 ## Story tracker (Plane)
 

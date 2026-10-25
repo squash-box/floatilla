@@ -311,13 +311,14 @@ func TestAcceptanceAnswerEverywhere(t *testing.T) {
 		t.Fatalf("answers = %v", src.answers)
 	}
 
+	selected := a.selectedTask().GetId()
 	run(a, "x")
 	if a.in.kind != inputConfirmStop || len(src.stops) != 0 {
 		t.Fatal("x should ask to confirm first")
 	}
 	run(a, "y")
-	if len(src.stops) != 1 {
-		t.Fatal("confirmed stop not sent")
+	if len(src.stops) != 1 || src.stops[0] == "" || src.stops[0] != selected {
+		t.Fatalf("stops = %q, want the selected task %q", src.stops, selected)
 	}
 }
 

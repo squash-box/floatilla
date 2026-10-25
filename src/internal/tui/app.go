@@ -334,9 +334,9 @@ func (a *App) key(k string) tea.Cmd {
 func (a *App) inputKey(k string) tea.Cmd {
 	in := &a.in
 	if in.kind == inputConfirmStop {
+		id := in.taskID // read before the reset: in points at a.in
 		a.in = input{}
 		if k == "y" || k == "enter" {
-			id := in.taskID
 			name := a.taskName(id)
 			return a.action("stopped "+name, func(ctx context.Context) error { return a.src.Stop(ctx, id, "stopped from the fleet manager") })
 		}

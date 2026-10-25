@@ -15,12 +15,15 @@ const (
 )
 
 // Decide applies a permission policy to a tool. Deny wins over allow and
-// ask; tools the policy doesn't mention are denied.
-func Decide(p *v1.PermissionPolicy, tool string) Decision {
+// ask; tools the policy doesn't mention are denied. In yolo mode tools the
+// policy would ask about are allowed without asking; denials still hold.
+func Decide(p *v1.PermissionPolicy, tool string, yolo bool) Decision {
 	switch {
 	case slices.Contains(p.GetDeny(), tool):
 		return Deny
 	case slices.Contains(p.GetAllow(), tool):
+		return Allow
+	case slices.Contains(p.GetAsk(), tool) && yolo:
 		return Allow
 	case slices.Contains(p.GetAsk(), tool):
 		return Ask

@@ -372,16 +372,50 @@ func (c *cli) resolve(ref string) (*v1.Task, error) {
 	if err != nil {
 		return nil, err
 	}
-	var match *v1.Task
-	for _, t := range list.Msg.Tasks {
-		if t.Name == ref {
-			match = t // latest wins: list is in creation order
+	return matchTask(list.Msg.Tasks, ref)
+}
+
+// matchTask finds the task ref names: an exact name, a tracker key (e.g.
+// FLOAT-11), or a unique prefix of a name or id. Unfinished tasks win over
+// finished ones, and among equals the latest wins (tasks are in creation
+// order).
+func matchTask(tasks []*v1.Task, ref string) (*v1.Task, error) {
+	exact := func(t *v1.Task) bool {
+		return t.Name == ref || (t.Inputs["tracker.key"] != "" && strings.EqualFold(t.Inputs["tracker.key"], ref))
+	}
+	prefix := func(t *v1.Task) bool {
+		return strings.HasPrefix(t.Name, ref) || strings.HasPrefix(t.Id, ref)
+	}
+	for i, rule := range []func(*v1.Task) bool{exact, prefix} {
+		var live, done []*v1.Task
+		for _, t := range tasks {
+			if !rule(t) {
+				continue
+			}
+			if t.Status == v1.TaskStatus_TASK_STATUS_SUCCEEDED || t.Status == v1.TaskStatus_TASK_STATUS_FAILED {
+				done = append(done, t)
+			} else {
+				live = append(live, t)
+			}
+		}
+		matches := live
+		if len(matches) == 0 {
+			matches = done
+		}
+		switch {
+		case len(matches) == 0:
+			continue
+		case len(matches) == 1 || i == 0: // several exact matches: the latest
+			return matches[len(matches)-1], nil
+		default:
+			var names []string
+			for _, t := range matches {
+				names = append(names, t.Name)
+			}
+			return nil, fmt.Errorf("%q matches %d tasks: %s", ref, len(matches), strings.Join(names, ", "))
 		}
 	}
-	if match == nil {
-		return nil, fmt.Errorf("no task %q", ref)
-	}
-	return match, nil
+	return nil, fmt.Errorf("no task %q (see floatilla ls)", ref)
 }
 
 func (c *cli) stageNames() (map[string][]string, error) {

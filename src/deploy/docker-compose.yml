@@ -25,6 +25,14 @@ x-launcher: &launcher
     FLOATILLA_MODEL: ${FLOATILLA_MODEL:-}
     FLOATILLA_EFFORT: ${FLOATILLA_EFFORT:-}
     FLOATILLA_KEEP_SANDBOXES: ${FLOATILLA_KEEP_SANDBOXES:-false}
+    # true: tools a pack would ask about run without a permission prompt.
+    # Denied tools stay denied; approvals and questions still come to you.
+    FLOATILLA_YOLO: ${FLOATILLA_YOLO:-false}
+    # GitHub access for pushes and PRs (gh), and the commit author. The
+    # author defaults to the token's account and its noreply email.
+    GH_TOKEN: ${GH_TOKEN:-}
+    FLOATILLA_GIT_NAME: ${FLOATILLA_GIT_NAME:-}
+    FLOATILLA_GIT_EMAIL: ${FLOATILLA_GIT_EMAIL:-}
 
 services:
   nats:

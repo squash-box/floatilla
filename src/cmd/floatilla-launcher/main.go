@@ -25,6 +25,10 @@ var passthrough = []string{
 	"FLOATILLA_MODEL",
 	"FLOATILLA_EFFORT",
 	"FLOATILLA_MAX_TOKENS",
+	"FLOATILLA_YOLO",
+	"GH_TOKEN",
+	"FLOATILLA_GIT_NAME",
+	"FLOATILLA_GIT_EMAIL",
 }
 
 func main() {

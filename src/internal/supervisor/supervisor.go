@@ -35,6 +35,9 @@ type Config struct {
 	// StopGrace is how long the agent gets to exit after a stop.
 	StopGrace time.Duration
 	TailLines int
+	Git       GitConfig
+	// Yolo runs tools the policy would ask about without asking.
+	Yolo bool
 }
 
 type Supervisor struct {
@@ -110,8 +113,15 @@ func (s *Supervisor) Run(ctx context.Context) error {
 		return err
 	}
 
+	gitEnv, err := SetupGit(ctx, s.cfg.Git)
+	if err != nil {
+		s.log.Warn("git setup", "err", err)
+		_ = s.publish(ctx, &v1.AgentEvent{Body: &v1.AgentEvent_Log{Log: &v1.LogLine{Kind: "start", Text: err.Error(), Tone: v1.LogTone_LOG_TONE_FAILED}}})
+	}
+
 	child := exec.CommandContext(ctx, s.cfg.AgentCmd[0], s.cfg.AgentCmd[1:]...)
 	child.Dir = s.cfg.Workspace
+	child.Env = append(os.Environ(), gitEnv...)
 	child.Stderr = os.Stderr
 	stdout, err := child.StdoutPipe()
 	if err != nil {
@@ -282,7 +292,7 @@ func (s *Supervisor) handleToolRequest(ctx context.Context, r *v1.ToolRequest) e
 			RequestId: r.RequestId, Allowed: allowed, Reason: reason,
 		}}})
 	}
-	switch Decide(s.req.GetProcessType().GetPermissions(), r.Tool) {
+	switch Decide(s.req.GetProcessType().GetPermissions(), r.Tool, s.cfg.Yolo) {
 	case Allow:
 		return decision(true, "")
 	case Deny:
