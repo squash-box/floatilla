@@ -99,6 +99,9 @@ message PromptResolved {
 message UsageDelta {
   string model = 1;
   Usage usage = 2;
+  // The tokens ran on a Claude subscription: priced as indicative cost,
+  // not billed cost.
+  bool subscription = 3;
 }
 
 // StoriesPublished replaces the task's proposed stories and spec.

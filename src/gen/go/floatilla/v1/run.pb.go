@@ -807,9 +807,12 @@ func (x *PromptResolved) GetPromptId() string {
 }
 
 type UsageDelta struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Model         string                 `protobuf:"bytes,1,opt,name=model,proto3" json:"model,omitempty"`
-	Usage         *Usage                 `protobuf:"bytes,2,opt,name=usage,proto3" json:"usage,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Model string                 `protobuf:"bytes,1,opt,name=model,proto3" json:"model,omitempty"`
+	Usage *Usage                 `protobuf:"bytes,2,opt,name=usage,proto3" json:"usage,omitempty"`
+	// The tokens ran on a Claude subscription: priced as indicative cost,
+	// not billed cost.
+	Subscription  bool `protobuf:"varint,3,opt,name=subscription,proto3" json:"subscription,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -856,6 +859,13 @@ func (x *UsageDelta) GetUsage() *Usage {
 		return x.Usage
 	}
 	return nil
+}
+
+func (x *UsageDelta) GetSubscription() bool {
+	if x != nil {
+		return x.Subscription
+	}
+	return false
 }
 
 // StoriesPublished replaces the task's proposed stories and spec.
@@ -1439,11 +1449,12 @@ const file_floatilla_v1_run_proto_rawDesc = "" +
 	"\fPromptRaised\x12,\n" +
 	"\x06prompt\x18\x01 \x01(\v2\x14.floatilla.v1.PromptR\x06prompt\"-\n" +
 	"\x0ePromptResolved\x12\x1b\n" +
-	"\tprompt_id\x18\x01 \x01(\tR\bpromptId\"M\n" +
+	"\tprompt_id\x18\x01 \x01(\tR\bpromptId\"q\n" +
 	"\n" +
 	"UsageDelta\x12\x14\n" +
 	"\x05model\x18\x01 \x01(\tR\x05model\x12)\n" +
-	"\x05usage\x18\x02 \x01(\v2\x13.floatilla.v1.UsageR\x05usage\"U\n" +
+	"\x05usage\x18\x02 \x01(\v2\x13.floatilla.v1.UsageR\x05usage\x12\"\n" +
+	"\fsubscription\x18\x03 \x01(\bR\fsubscription\"U\n" +
 	"\x10StoriesPublished\x12-\n" +
 	"\astories\x18\x01 \x03(\v2\x13.floatilla.v1.StoryR\astories\x12\x12\n" +
 	"\x04spec\x18\x02 \x01(\tR\x04spec\"m\n" +

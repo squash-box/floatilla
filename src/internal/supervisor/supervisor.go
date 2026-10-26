@@ -266,9 +266,7 @@ func (s *Supervisor) handleAgent(ctx context.Context, m *v1.AgentMessage) error 
 	case *v1.AgentMessage_Artefact:
 		return s.publish(ctx, &v1.AgentEvent{Body: &v1.AgentEvent_Artefact{Artefact: b.Artefact}})
 	case *v1.AgentMessage_Usage:
-		u := proto.Clone(b.Usage.GetUsage()).(*v1.Usage)
-		u.CostUsd = Cost(b.Usage.Model, u)
-		return s.publish(ctx, &v1.AgentEvent{Body: &v1.AgentEvent_Usage{Usage: &v1.UsageDelta{Model: b.Usage.Model, Usage: u}}})
+		return s.publish(ctx, &v1.AgentEvent{Body: &v1.AgentEvent_Usage{Usage: Price(b.Usage)}})
 	case *v1.AgentMessage_ToolRequest:
 		return s.handleToolRequest(ctx, b.ToolRequest)
 	case *v1.AgentMessage_Ask:
