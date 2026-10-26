@@ -107,7 +107,8 @@ describe("ClaudeCodeEngine", () => {
     assert.ok(logs.some((l) => l.startsWith("start|claude code 2.1.300")));
     assert.ok(logs.some((l) => l.includes("five hour limit at 80%")));
     const [u] = host.of("usage");
-    assert.equal(u?.model, "claude-opus-5-5 (subscription)");
+    assert.equal(u?.model, "claude-opus-5-5");
+    assert.equal(u?.subscription, true);
   });
 
   test("with an API key and no token, usage is priced and the key is kept", async () => {
@@ -117,7 +118,23 @@ describe("ClaudeCodeEngine", () => {
     });
     await new ClaudeCodeEngine(cfg, fn, { ANTHROPIC_API_KEY: "sk-ant-x" }).runStage(req(host));
     assert.equal(calls[0]!.options.env?.ANTHROPIC_API_KEY, "sk-ant-x");
-    assert.equal(host.of("usage")[0]?.model, "claude-opus-5-5");
+    const [u] = host.of("usage");
+    assert.equal(u?.model, "claude-opus-5-5");
+    assert.equal(u?.subscription, false);
+  });
+
+  test("usage is reported under the canonical model, else the modelUsage key", async () => {
+    const host = new FakeHost();
+    const { fn } = fakeQuery(async function* () {
+      yield result({
+        modelUsage: {
+          "claude-opus-5-5[1m]": { ...usage, canonicalModel: "claude-opus-5-5" },
+          "claude-haiku-5-5[1m]": usage,
+        },
+      });
+    });
+    await new ClaudeCodeEngine(cfg, fn, { CLAUDE_CODE_OAUTH_TOKEN: "tok" }).runStage(req(host));
+    assert.deepEqual(host.of("usage").map((u) => u.model), ["claude-opus-5-5", "claude-haiku-5-5[1m]"]);
   });
 
   test("an error result fails the stage", async () => {
