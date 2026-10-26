@@ -13,6 +13,7 @@ import {
   query as sdkQuery,
   tool,
   type CanUseTool,
+  type ModelUsage,
   type Options,
   type SDKMessage,
 } from "@anthropic-ai/claude-agent-sdk";
@@ -329,14 +330,15 @@ export class ClaudeCodeEngine implements StageEngine {
     }
   }
 
-  private reportUsage(host: Host, modelUsage: Record<string, { inputTokens: number; outputTokens: number; cacheReadInputTokens: number; cacheCreationInputTokens: number }>): void {
-    for (const [model, u] of Object.entries(modelUsage ?? {})) {
+  private reportUsage(host: Host, modelUsage: Record<string, ModelUsage>): void {
+    for (const [key, u] of Object.entries(modelUsage ?? {})) {
       host.send({
         case: "usage",
         value: {
-          // On a subscription there's no per-token bill; an unpriced model
-          // name makes the supervisor meter tokens at $0.
-          model: this.subscription ? `${model} (subscription)` : model,
+          model: u.canonicalModel || key,
+          // A subscription has no per-token bill: the supervisor prices
+          // these tokens at list rates as indicative cost, not billed cost.
+          subscription: this.subscription,
           usage: {
             inputTokens: BigInt(u.inputTokens),
             outputTokens: BigInt(u.outputTokens),
