@@ -109,7 +109,7 @@ func (a *App) fleetHeader(c *Canvas, visible []*v1.Task, idle bool) {
 	if idle {
 		totalsOf = a.fleet.Recent(now, false)
 	}
-	tokens, cost := Totals(totalsOf)
+	tokens, billed, indicative := Totals(totalsOf)
 	size := fmt.Sprintf("%d×%d", a.w, a.h)
 	conn := []Span{}
 	if a.connErr != "" {
@@ -130,7 +130,7 @@ func (a *App) fleetHeader(c *Canvas, visible []*v1.Task, idle bool) {
 		} else {
 			left = append(left, a.countSpans(counts, labels, "  ")...)
 		}
-		money := fmtCost(cost)
+		money := fmtCost(billed, indicative)
 		if withTokens {
 			money = fmtTokens(tokens) + " tok · " + money
 		}
@@ -227,6 +227,7 @@ func (a *App) drawHelp(c *Canvas) {
 		{"j k · f", "detail: scroll · follow the log"},
 		{"tab", "detail: switch pane"},
 		{"esc", "back to the fleet · clear filter"},
+		{"~$", "est. cost · subscription, not billed"},
 		{"q", "quit"},
 	}
 	w := min(a.w-4, 64)
@@ -553,10 +554,10 @@ func (a *App) drawTile(c *Canvas, x, y, w, h int, t *v1.Task, spec *v1.ProcessTy
 
 	ix, iw := x+2, w-4
 	l := statusLook(t.Status, a.frame+phase(t.Id))
-	spend := fmtTokens(taskTokens(t)) + " · " + fmtCost(t.GetUsage().GetCostUsd())
+	spend := fmtTokens(taskTokens(t)) + " · " + CostLabel(t.GetUsage())
 	left := l.Glyph + " " + l.Label
 	if Width(left)+Width(spend)+2 > iw {
-		spend = fmtCost(t.GetUsage().GetCostUsd())
+		spend = CostLabel(t.GetUsage())
 	}
 	c.Text(ix, y+1, left, l.style(), iw)
 	if Width(left)+Width(spend)+2 <= iw {

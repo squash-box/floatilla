@@ -36,7 +36,7 @@ func (a *App) drawDetail(c *Canvas) {
 		if t.Branch != "" {
 			left = append(left, Span{"   ⎇ ", stMuted}, Span{t.Branch, stMuted})
 		}
-		right := []Span{{fmtTokens(taskTokens(t)) + " tok · " + fmtCost(t.GetUsage().GetCostUsd()), stMuted}, {fmt.Sprintf("  %d×%d ", a.w, a.h), stMuted}}
+		right := []Span{{fmtTokens(taskTokens(t)) + " tok · " + CostLabel(t.GetUsage()), stMuted}, {fmt.Sprintf("  %d×%d ", a.w, a.h), stMuted}}
 		a.drawBar(c, 0, left, right)
 
 		paneH := a.h - 3
@@ -60,7 +60,7 @@ func (a *App) drawDetail(c *Canvas) {
 	} else {
 		left := []Span{{" ‹ ", stMuted}, {t.Name, stBold}, {"  [" + spec.GetTag() + "]  ", stMuted},
 			{fmt.Sprintf("%s %d/%d ", l.Glyph, t.StageIndex+1, len(spec.GetStages())), l.style()}, {stageName(spec, t.StageIndex), stInk}}
-		right := []Span{{fmtCost(t.GetUsage().GetCostUsd()), stMuted}, {fmt.Sprintf("  %d×%d ", a.w, a.h), stMuted}}
+		right := []Span{{CostLabel(t.GetUsage()), stMuted}, {fmt.Sprintf("  %d×%d ", a.w, a.h), stMuted}}
 		a.drawBar(c, 0, left, right)
 		a.drawTabs(c, t, tabs, 3, 1, a.w-4, true)
 		c.HLine(1, 2, a.w-2, '─', stLine)

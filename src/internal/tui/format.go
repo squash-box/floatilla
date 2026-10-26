@@ -72,7 +72,17 @@ func fmtTokens(n int64) string {
 	}
 }
 
-func fmtCost(c float64) string { return fmt.Sprintf("$%.2f", c) }
+// fmtCost renders spend: billed plus indicative, marked "~" when any of it
+// is an estimate for subscription usage that isn't billed per token.
+func fmtCost(billed, indicative float64) string {
+	if indicative > 0 {
+		return fmt.Sprintf("~$%.2f", billed+indicative)
+	}
+	return fmt.Sprintf("$%.2f", billed)
+}
+
+// CostLabel is a task's spend as fmtCost renders it; the CLI shares it.
+func CostLabel(u *v1.Usage) string { return fmtCost(u.GetCostUsd(), u.GetIndicativeCostUsd()) }
 
 func fmtDuration(d time.Duration) string {
 	switch {

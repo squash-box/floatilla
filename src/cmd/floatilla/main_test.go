@@ -48,3 +48,19 @@ func TestMatchTask(t *testing.T) {
 		}
 	}
 }
+
+func TestCostBreakdown(t *testing.T) {
+	for _, c := range []struct {
+		u    *v1.Usage
+		want string
+	}{
+		{nil, ""},
+		{&v1.Usage{CostUsd: 0.4}, ""},
+		{&v1.Usage{CostUsd: 0.4, IndicativeCostUsd: 2.1},
+			"  cost: $0.40 billed + ~$2.10 indicative (subscription usage at API list prices, not billed)"},
+	} {
+		if got := costBreakdown(c.u); got != c.want {
+			t.Errorf("costBreakdown(%v) = %q, want %q", c.u, got, c.want)
+		}
+	}
+}
