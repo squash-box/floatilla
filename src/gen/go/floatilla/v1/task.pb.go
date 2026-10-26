@@ -218,9 +218,13 @@ type Usage struct {
 	OutputTokens     int64                  `protobuf:"varint,2,opt,name=output_tokens,json=outputTokens,proto3" json:"output_tokens,omitempty"`
 	CacheReadTokens  int64                  `protobuf:"varint,3,opt,name=cache_read_tokens,json=cacheReadTokens,proto3" json:"cache_read_tokens,omitempty"`
 	CacheWriteTokens int64                  `protobuf:"varint,4,opt,name=cache_write_tokens,json=cacheWriteTokens,proto3" json:"cache_write_tokens,omitempty"`
-	CostUsd          float64                `protobuf:"fixed64,5,opt,name=cost_usd,json=costUsd,proto3" json:"cost_usd,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// Billed USD: usage paid for per token (API key).
+	CostUsd float64 `protobuf:"fixed64,5,opt,name=cost_usd,json=costUsd,proto3" json:"cost_usd,omitempty"`
+	// USD at API list prices for usage that isn't billed per token
+	// (subscription runs). An estimate, not included in cost_usd.
+	IndicativeCostUsd float64 `protobuf:"fixed64,6,opt,name=indicative_cost_usd,json=indicativeCostUsd,proto3" json:"indicative_cost_usd,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *Usage) Reset() {
@@ -284,6 +288,13 @@ func (x *Usage) GetCacheWriteTokens() int64 {
 func (x *Usage) GetCostUsd() float64 {
 	if x != nil {
 		return x.CostUsd
+	}
+	return 0
+}
+
+func (x *Usage) GetIndicativeCostUsd() float64 {
+	if x != nil {
+		return x.IndicativeCostUsd
 	}
 	return 0
 }
@@ -832,13 +843,14 @@ const file_floatilla_v1_task_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12,\n" +
 	"\x04kind\x18\x02 \x01(\x0e2\x18.floatilla.v1.PromptKindR\x04kind\x12\x12\n" +
 	"\x04text\x18\x03 \x01(\tR\x04text\x12\x16\n" +
-	"\x06detail\x18\x04 \x01(\tR\x06detail\"\xc4\x01\n" +
+	"\x06detail\x18\x04 \x01(\tR\x06detail\"\xf4\x01\n" +
 	"\x05Usage\x12!\n" +
 	"\finput_tokens\x18\x01 \x01(\x03R\vinputTokens\x12#\n" +
 	"\routput_tokens\x18\x02 \x01(\x03R\foutputTokens\x12*\n" +
 	"\x11cache_read_tokens\x18\x03 \x01(\x03R\x0fcacheReadTokens\x12,\n" +
 	"\x12cache_write_tokens\x18\x04 \x01(\x03R\x10cacheWriteTokens\x12\x19\n" +
-	"\bcost_usd\x18\x05 \x01(\x01R\acostUsd\"\xc9\x01\n" +
+	"\bcost_usd\x18\x05 \x01(\x01R\acostUsd\x12.\n" +
+	"\x13indicative_cost_usd\x18\x06 \x01(\x01R\x11indicativeCostUsd\"\xc9\x01\n" +
 	"\vStageRecord\x12\x14\n" +
 	"\x05index\x18\x01 \x01(\x05R\x05index\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x129\n" +

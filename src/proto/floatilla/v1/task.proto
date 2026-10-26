@@ -42,7 +42,11 @@ message Usage {
   int64 output_tokens = 2;
   int64 cache_read_tokens = 3;
   int64 cache_write_tokens = 4;
+  // Billed USD: usage paid for per token (API key).
   double cost_usd = 5;
+  // USD at API list prices for usage that isn't billed per token
+  // (subscription runs). An estimate, not included in cost_usd.
+  double indicative_cost_usd = 6;
 }
 
 message StageRecord {

@@ -408,4 +408,5 @@ func addUsage(dst, d *v1.Usage) {
 	dst.CacheReadTokens += d.GetCacheReadTokens()
 	dst.CacheWriteTokens += d.GetCacheWriteTokens()
 	dst.CostUsd += d.GetCostUsd()
+	dst.IndicativeCostUsd += d.GetIndicativeCostUsd()
 }

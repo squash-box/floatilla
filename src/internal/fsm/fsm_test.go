@@ -106,7 +106,9 @@ func TestFullLifecycle(t *testing.T) {
 
 	h.ev(&v1.AgentEvent{Body: &v1.AgentEvent_Usage{Usage: &v1.UsageDelta{Usage: &v1.Usage{InputTokens: 100, CostUsd: 0.5}}}})
 	h.ev(&v1.AgentEvent{Body: &v1.AgentEvent_Usage{Usage: &v1.UsageDelta{Usage: &v1.Usage{InputTokens: 50, CostUsd: 0.25}}}})
-	if h.task.Usage.InputTokens != 150 || h.task.Usage.CostUsd != 0.75 {
+	h.ev(&v1.AgentEvent{Body: &v1.AgentEvent_Usage{Usage: &v1.UsageDelta{Subscription: true, Usage: &v1.Usage{OutputTokens: 10, IndicativeCostUsd: 1.25}}}})
+	if h.task.Usage.InputTokens != 150 || h.task.Usage.OutputTokens != 10 ||
+		h.task.Usage.CostUsd != 0.75 || h.task.Usage.IndicativeCostUsd != 1.25 {
 		t.Fatalf("usage = %v", h.task.Usage)
 	}
 
