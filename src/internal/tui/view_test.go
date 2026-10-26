@@ -85,7 +85,7 @@ func TestAcceptanceMainGrid(t *testing.T) {
 	if st := c.StyleAt(colOf(c, y, "╭"), y); st.FG != Accent {
 		t.Fatalf("selected border style = %+v, want accent", st)
 	}
-	for _, want := range []string{"lanes 1 : 2 : 1 · 3 rows", "PLANNING · 2", "IMPLEMENTATION · 6", "DEPLOY · 2", "◆ 2 waiting", "$15.16"} {
+	for _, want := range []string{"lanes 1 : 2 : 1 · 3 rows", "PLANNING · 2", "IMPLEMENTATION · 6", "DEPLOY · 2", "◆ 2 waiting", "$15.16", "~$15.16"} {
 		if row(c, want) < 0 {
 			t.Errorf("missing %q", want)
 		}
@@ -354,6 +354,38 @@ func TestAcceptanceDetailLog(t *testing.T) {
 	press(a, "esc")
 	if a.screen != screenFleet || a.detail != nil {
 		t.Fatal("esc should return to the fleet")
+	}
+}
+
+// Subscription spend is marked "~" in the detail header; billed spend isn't.
+func TestDetailCostMarker(t *testing.T) {
+	for _, c := range []struct{ name, want, not string }{
+		{"auth-refactor", "~$2.14", ""},
+		{"flaky-tests", "$1.74", "~$1.74"},
+	} {
+		for _, sz := range [][2]int{{160, 44}, {80, 24}} {
+			a := demoApp(t, sz[0], sz[1], nil)
+			for _, tk := range DemoTasks(testNow) {
+				if tk.Name == c.name {
+					a.sel = selection{lane: tk.ProcessType, id: tk.Id}
+				}
+			}
+			press(a, "enter")
+			top := a.Render().Row(0)
+			if !strings.Contains(top, c.name) || !strings.Contains(top, c.want) || (c.not != "" && strings.Contains(top, c.not)) {
+				t.Errorf("%s at %dx%d: header %q, want %q", c.name, sz[0], sz[1], top, c.want)
+			}
+		}
+	}
+}
+
+func TestHelpLegendsIndicativeCost(t *testing.T) {
+	a := demoApp(t, 160, 44, nil)
+	press(a, "?")
+	c := a.Render()
+	y := row(c, "est. cost · subscription, not billed")
+	if y < 0 || !strings.Contains(c.Row(y), "~$") {
+		t.Fatalf("help has no indicative cost legend:\n%s", c.Plain())
 	}
 }
 

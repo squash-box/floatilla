@@ -81,7 +81,10 @@ export interface Agent {
   startedAt: Date;
   finishedAt?: Date;
   tokens: number;
+  /** billed USD (API key) */
   costUsd: number;
+  /** USD at API list prices for subscription usage; an estimate, not billed. Shown as `~$` (SPEC §3) */
+  indicativeCostUsd: number;
   /** one-line present-tense activity, e.g. "editing src/auth/middleware.ts" */
   activity: string;
   /** last 0–2 log lines for the tile */

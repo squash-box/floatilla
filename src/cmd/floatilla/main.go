@@ -20,6 +20,7 @@ import (
 	v1 "github.com/squash-box/floatilla/src/gen/go/floatilla/v1"
 	"github.com/squash-box/floatilla/src/gen/go/floatilla/v1/floatillav1connect"
 	"github.com/squash-box/floatilla/src/internal/env"
+	"github.com/squash-box/floatilla/src/internal/tui"
 )
 
 const usage = `usage: floatilla [command] [flags]
@@ -152,9 +153,9 @@ func (c *cli) ls(args []string) error {
 	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(tw, "ID\tNAME\tTYPE\tSTATUS\tSTAGE\tCOST\tACTIVITY")
 	for _, t := range res.Msg.Tasks {
-		fmt.Fprintf(tw, "%s\t%s\t%s\t%s %s\t%s\t$%.2f\t%s\n",
+		fmt.Fprintf(tw, "%s\t%s\t%s\t%s %s\t%s\t%s\t%s\n",
 			t.Id, t.Name, t.ProcessType, glyph(t.Status), label(t.Status),
-			stage(t, stages), t.GetUsage().GetCostUsd(), ellipsis(t.Activity, 60))
+			stage(t, stages), tui.CostLabel(t.GetUsage()), ellipsis(t.Activity, 60))
 	}
 	return tw.Flush()
 }
@@ -180,8 +181,12 @@ func (c *cli) get(args []string) error {
 func printTask(t *v1.Task, stages map[string][]string) {
 	fmt.Printf("%s  [%s] %s  %s %s  stage %s\n", t.Id, strings.ToUpper(t.ProcessType), t.Name, glyph(t.Status), label(t.Status), stage(t, stages))
 	fmt.Printf("  %s\n", t.Title)
-	fmt.Printf("  workflow %s · run %d · %d tok · $%.2f\n", t.Workflow, t.RunSeq,
-		t.GetUsage().GetInputTokens()+t.GetUsage().GetOutputTokens(), t.GetUsage().GetCostUsd())
+	u := t.GetUsage()
+	fmt.Printf("  workflow %s · run %d · %d tok · %s\n", t.Workflow, t.RunSeq,
+		u.GetInputTokens()+u.GetOutputTokens()+u.GetCacheReadTokens()+u.GetCacheWriteTokens(), tui.CostLabel(u))
+	if b := costBreakdown(u); b != "" {
+		fmt.Println(b)
+	}
 	if t.Activity != "" {
 		fmt.Printf("  activity: %s\n", t.Activity)
 	}
@@ -211,6 +216,16 @@ func printTask(t *v1.Task, stages map[string][]string) {
 	if t.Error != "" {
 		fmt.Printf("  error: %s\n", t.Error)
 	}
+}
+
+// costBreakdown splits a task's spend into billed and indicative cost, or is
+// empty when none of it is indicative.
+func costBreakdown(u *v1.Usage) string {
+	if u.GetIndicativeCostUsd() <= 0 {
+		return ""
+	}
+	return fmt.Sprintf("  cost: $%.2f billed + ~$%.2f indicative (subscription usage at API list prices, not billed)",
+		u.GetCostUsd(), u.GetIndicativeCostUsd())
 }
 
 func (c *cli) watch(args []string) error {

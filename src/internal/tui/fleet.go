@@ -227,12 +227,14 @@ func (f *Fleet) LastRun(lane string, now time.Time) *v1.Task {
 	return nil
 }
 
-// Totals sums usage over the given tasks.
-func Totals(ts []*v1.Task) (tokens int64, cost float64) {
+// Totals sums usage over the given tasks, keeping billed and indicative
+// cost apart.
+func Totals(ts []*v1.Task) (tokens int64, billed, indicative float64) {
 	for _, t := range ts {
 		u := t.GetUsage()
 		tokens += u.GetInputTokens() + u.GetOutputTokens() + u.GetCacheReadTokens() + u.GetCacheWriteTokens()
-		cost += u.GetCostUsd()
+		billed += u.GetCostUsd()
+		indicative += u.GetIndicativeCostUsd()
 	}
-	return tokens, cost
+	return tokens, billed, indicative
 }

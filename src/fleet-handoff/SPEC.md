@@ -79,6 +79,8 @@ row H        STATUS BAR (pane-raised): [MODE chip] key hints … ? help
 
 **Header bar:** `flotilla` (bold), then per-type counts `plan 2  impl 6  deploy 2`, a `│` divider, then per-status counts with glyph and colour (`⠹ 5 running  ◆ 2 waiting  ✗ 1 failed  ✓ 1 done  ‖ 1 paused`), then right-aligned `283.6k tok · $15.16` and the terminal size `160×44` in `ink-muted`. At narrow widths drop the labels to glyph + count (`⠹ 5  ◆ 2 …`), then drop the type counts, then drop tokens and keep cost.
 
+**Cost** (header, tile, detail header) is the billed cost plus the indicative cost, `$%.2f`. Indicative cost is subscription usage priced at API list rates, an estimate that isn't billed. When any part of the figure is indicative it gets a `~` prefix, in the same `ink-muted`: `283.6k tok · ~$15.16`, `38.2k · ~$2.14`. Billed-only spend shows no `~`.
+
 **Status bar:** a mode chip in `accent` fill / `accent-ink` text (`GRID`, `LIST`, `LOG`, `DIFF`, `TESTS`, `IDLE`), then key hints for the focused context: key in `ink`, label in `ink-muted`. The primary action key (e.g. `⏎`) is in `accent`. `? help` is right-aligned.
 
 **Panes:** the unfocused pane is a light box `┌─┐│└┘` in `line`, with its title in `ink-muted`. The focused pane is a rounded box `╭─╮│╰╯` in `accent`, with its title in `accent`. Titles are set into the top border in capitals (`╭─ LOG · FOLLOWING ───`). Exactly one pane is focused.
@@ -127,7 +129,7 @@ Full tile is 11 rows (incl. borders). Compact is 9 rows.
 
 ```
 ╭─ flaky-tests ─────────────── 22m ─╮   ← name (bold) in border, left; elapsed right (muted)
-│ ◆ waiting           31.0k · $1.74 │   ← status glyph+label (status colour; waiting bold) · tokens · cost (muted)
+│ ◆ waiting           31.0k · $1.74 │   ← status glyph+label (status colour; waiting bold) · tokens · cost (muted; `~$` when indicative, §3)
 │ Stabilise flaky checkout e2e suite│   ← task title, ellipsised
 │ ███ ███ ██░ ░░░ ░░░ ░░░ ░░░       │   ← STAGE TRACK (§4.4)
 │ 3/7 testing                       │   ← stage n/N (muted) + stage name (bold)
@@ -250,7 +252,7 @@ Mockups: `Detail.dc.html` (160×44, interactive tabs), `Detail-80.dc.html`.
  LOG  1 2 3 artefact  j/k scroll  f follow  ] next file  a attach  x stop                                  esc fleet  ? help
 ```
 
-- **Header:** breadcrumb `flotilla › [TYPE] name`, status glyph + label · elapsed, `stage n/N <name>`, branch, then right-aligned tokens · cost and size.
+- **Header:** breadcrumb `flotilla › [TYPE] name`, status glyph + label · elapsed, `stage n/N <name>`, branch, then right-aligned tokens · cost and size. The cost follows the `~` rule in §3: a subscription run reads `38.2k tok · ~$2.14`.
 - **Rail** (36 cols, unfocused): task (bold), started time, stage track (impl uses 4-cell segments here), a `<TYPE> STAGES` tree with ✓ / spinner / ○, elapsed per finished or current stage, one sub-line of stats under the current stage, the ARTEFACTS list (selected row on `pane-raised`, bold), and a footer with the context-window meter and `a attach`.
 - **Artefact pane** (focused): the title reflects the artefact (`LOG · FOLLOWING`, `DIFF · 7 FILES`, `TESTS · 41 ✓ 2 ✗`), followed by a tab strip. The active tab is an accent chip.
 
@@ -376,7 +378,7 @@ Mockup: `Grid-80.dc.html`.
 
 | Context | Key | Action |
 | --- | --- | --- |
-| global | `?` | help |
+| global | `?` | help (key list, then the legend row `~$  est. cost · subscription, not billed` just before `q  quit`) |
 | global | `/` | filter (name, type, status) |
 | global | `tab` / `⇧tab` | cycle pane focus |
 | grid | `h j k l` / arrows | move selection (crosses lanes at edges) |

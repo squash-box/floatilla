@@ -33,6 +33,7 @@ type demoAgent struct {
 	elapsed           time.Duration
 	tokens            int64
 	cost              float64
+	sub               bool // on a Claude subscription: cost is indicative
 	title, activity   string
 	tail              []string
 	artefacts         [][2]string
@@ -41,27 +42,27 @@ type demoAgent struct {
 
 // The sample fleet from fleet-handoff/design/mockups/Main.dc.html.
 var demoFleet = []demoAgent{
-	{"plan", "fx-retry-spec", "waiting", 2, 0.5, 12 * time.Minute, 14800, 0.74, "Spec retry policy for FX rate fetch", "approve spec? 2 open questions",
+	{"plan", "fx-retry-spec", "waiting", 2, 0.5, 12 * time.Minute, 14800, 0.74, true, "Spec retry policy for FX rate fetch", "approve spec? 2 open questions",
 		[]string{"wrote docs/specs/fx-retry.md · 4 sections"}, [][2]string{{"doc", "spec 4 sections  open q 2"}},
 		&v1.Prompt{Id: "p-spec", Kind: v1.PromptKind_PROMPT_KIND_APPROVAL, Text: "approve spec? 2 open questions"}},
-	{"plan", "otel-tracing", "running", 0, 0.6, 4 * time.Minute, 6100, 0.29, "Plan OpenTelemetry spans for Service Bus", "reading src/bus/handlers/",
+	{"plan", "otel-tracing", "running", 0, 0.6, 4 * time.Minute, 6100, 0.29, true, "Plan OpenTelemetry spans for Service Bus", "reading src/bus/handlers/",
 		[]string{"grep ServiceBusReceiver → 11 hits", "read src/bus/handlers/orders.ts"}, [][2]string{{"doc", "notes 14 findings  files 23 read"}}, nil},
-	{"impl", "flaky-tests", "waiting", 2, 0.7, 22 * time.Minute, 31000, 1.74, "Stabilise flaky checkout e2e suite", "approve Bash(pnpm test --runInBand)?",
+	{"impl", "flaky-tests", "waiting", 2, 0.7, 22 * time.Minute, 31000, 1.74, false, "Stabilise flaky checkout e2e suite", "approve Bash(pnpm test --runInBand)?",
 		[]string{"ran checkout.spec.ts 20× · 0 failures"}, [][2]string{{"diff", "+42 −17"}, {"tests", "✓118 ✗0"}},
 		&v1.Prompt{Id: "p-bash", Kind: v1.PromptKind_PROMPT_KIND_PERMISSION, Text: "approve Bash(pnpm test --runInBand)?", Detail: `{"command":"pnpm test --runInBand"}`}},
-	{"impl", "ledger-migration", "failed", 2, 0.8, 41 * time.Minute, 58300, 3.20, "Migrate ledger entries to v3 schema", "exit 1 in 4m12s · 2 tests failing",
+	{"impl", "ledger-migration", "failed", 2, 0.8, 41 * time.Minute, 58300, 3.20, false, "Migrate ledger entries to v3 schema", "exit 1 in 4m12s · 2 tests failing",
 		[]string{"✗ rolls back partial batch", "✗ preserves entry ordering"}, [][2]string{{"diff", "+312 −140"}, {"tests", "✓64 ✗2"}}, nil},
-	{"impl", "auth-refactor", "running", 1, 0.6, 14 * time.Minute, 38200, 2.14, "Move sessions to rotating refresh tokens", "editing src/auth/middleware.ts",
+	{"impl", "auth-refactor", "running", 1, 0.6, 14 * time.Minute, 38200, 2.14, true, "Move sessions to rotating refresh tokens", "editing src/auth/middleware.ts",
 		[]string{"edit src/auth/session.ts +31 −9", "bash pnpm tsc --noEmit · ✓ no errors"}, [][2]string{{"diff", "+184 −36"}, {"tests", "✓41 ✗2"}, {"doc", "docs/plans/auth-rotation.md"}}, nil},
-	{"impl", "orders-pagination", "running", 5, 0.4, 80 * time.Minute, 61900, 3.41, "Paginate /v2/orders with cursors", "addressing review on #142 · 2/3",
+	{"impl", "orders-pagination", "running", 5, 0.4, 80 * time.Minute, 61900, 3.41, false, "Paginate /v2/orders with cursors", "addressing review on #142 · 2/3",
 		[]string{"● resolved: clamp limit to 100", "edit src/api/orders.ts +6 −2"}, [][2]string{{"diff", "+274 −53"}, {"pr", "#142 ●1 open"}}, nil},
-	{"impl", "deps-bump", "running", 3, 0.5, 27 * time.Minute, 44000, 2.38, "Bump typescript 5.6 → 5.9 and fix types", "writing PR description",
+	{"impl", "deps-bump", "running", 3, 0.5, 27 * time.Minute, 44000, 2.38, false, "Bump typescript 5.6 → 5.9 and fix types", "writing PR description",
 		[]string{"git push -u origin agent/deps-bump", "gh pr create --draft"}, [][2]string{{"diff", "+221 −198"}, {"tests", "✓203 ✗0"}}, nil},
-	{"impl", "docs-sweep", "paused", 1, 0.4, 18 * time.Minute, 12200, 0.57, "Refresh API reference for v2 endpoints", "paused 11m ago · r to resume",
+	{"impl", "docs-sweep", "paused", 1, 0.4, 18 * time.Minute, 12200, 0.57, false, "Refresh API reference for v2 endpoints", "paused 11m ago · r to resume",
 		[]string{"write docs/api/orders.md +48", "edit docs/api/index.md +6 −2"}, [][2]string{{"diff", "+77 −20"}}, nil},
-	{"deploy", "fx-hotfix-prod", "running", 2, 0.7, 6 * time.Minute, 9400, 0.38, "Ship FX rounding hotfix to production", "verifying · smoke 14/20 passed",
+	{"deploy", "fx-hotfix-prod", "running", 2, 0.7, 6 * time.Minute, 9400, 0.38, false, "Ship FX rounding hotfix to production", "verifying · smoke 14/20 passed",
 		[]string{"rollout 100% · 6/6 pods ready", "p95 182ms · errors 0.1%"}, [][2]string{{"deploy", "env prod  checks 14/20  err 0.1%"}}, nil},
-	{"deploy", "pricing-staging", "success", 2, 1, 31 * time.Minute, 7700, 0.31, "Deploy pricing cache to staging", "verified · 0 errors in 10m",
+	{"deploy", "pricing-staging", "success", 2, 1, 31 * time.Minute, 7700, 0.31, false, "Deploy pricing cache to staging", "verified · 0 errors in 10m",
 		[]string{"smoke 20/20 passed", "rollback: helm rollback pricing 41"}, [][2]string{{"deploy", "env staging  checks 20/20  err 0.0%"}}, nil},
 }
 
@@ -90,10 +91,15 @@ func DemoTasks(now time.Time) []*v1.Task {
 			Branch:      "agent/" + a.name,
 			RunSeq:      1,
 			ContextUsed: float64(a.tokens) / 120_000,
-			Usage:       &v1.Usage{InputTokens: a.tokens * 9 / 10, OutputTokens: a.tokens / 10, CostUsd: a.cost},
+			Usage:       &v1.Usage{InputTokens: a.tokens * 9 / 10, OutputTokens: a.tokens / 10},
 			CreatedAt:   timestamppb.New(created),
 			StartedAt:   timestamppb.New(created),
 			UpdatedAt:   timestamppb.New(now),
+		}
+		if a.sub {
+			t.Usage.IndicativeCostUsd = a.cost
+		} else {
+			t.Usage.CostUsd = a.cost
 		}
 		if a.frac > 0 && a.status != "success" {
 			t.StageProgress = proto.Float32(a.frac)
@@ -289,7 +295,11 @@ func (d *DemoSource) animate() {
 				t.StageProgress = proto.Float32(p)
 			}
 			t.Usage.InputTokens += 800
-			t.Usage.CostUsd += 0.02
+			if t.Usage.IndicativeCostUsd > 0 { // a subscription task
+				t.Usage.IndicativeCostUsd += 0.02
+			} else {
+				t.Usage.CostUsd += 0.02
+			}
 			d.appendLog(id, "edit", file+fmt.Sprintf(" +%d −%d", d.n%17+1, d.n%5), 0)
 			d.publish(t)
 		}
